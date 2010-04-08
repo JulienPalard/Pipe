@@ -109,7 +109,7 @@ import sys
 __author__ = 'Julien Palard <julien@eeple.fr>'
 __credits__ = 'Jerome Schneider, for his Python skill'
 __date__ = '5 February 2010'
-__version__ = '1'
+__version__ = '1.1'
 
 class Pipe:
 	"""
