@@ -1,0 +1,182 @@
+Help on module pype:
+
+NAME
+    pype - Infix programming syntax
+
+FILE
+    /home/mandark/home/coding/python/pype/pype.py
+
+DESCRIPTION
+    Utilities enablig an infix syntax like this :
+    
+    euler2 = fib() | where(lambda x: x % 2 == 0)
+                   | take_while(lambda x: x < 4000000)
+                   | sum
+    
+    assert euler2 == 4613732
+    
+    Resolving the 2nd Euler Project exercise :
+    "Find the sum of all the even-valued terms in Fibonacci
+     which do not exceed four million."
+    
+    Each Pipe is useable as, for exemple sum :
+    [1, 2, 3] | sum
+    
+    Each FuncPipe is useable as, for exemple where :
+    [1, 2, 3] | where(lambda x: x % 2 == 0)
+    A FuncPipe is nothing more than a Parametrized Pipe,
+    or a function returning a specific Pipe
+    
+    You can construct your pipes using Pipe and FuncPipe classes like :
+    
+    stdout = Pipe(lambda x: sys.stdout.write(str(x)))
+    select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+    
+    Available Pipes are :
+    
+    stdout : Outputs anything to the standard output
+      Usage : "42" | stdout
+    
+    lineout : Outputs anything to the standard output followed by a line break
+      Usage : 42 | lineout
+    
+    average : Returns the average of the preceding Iterable
+      Usage : print [1, 2, 3, 4, 5, 6] | average
+    
+    count : Returns the length of the preceding Iterable, counting elements one by one
+    
+    sum : Returns the sum of all elements in the preceding Iterable
+    
+    first : Returns the first element of the preceding Iterable
+    
+    chain : Unfold preceding Iterable of Iterables
+      Usage : print [[1, 2], [3, 4], [5]] | chain
+              Gives [1, 2, 3, 4, 5]
+    
+    Available FuncPipes are :
+    select : Apply a conversion expression given as parameter to each element of the preceding Iterable
+      Usage : [1, 2, 3] | select(lambda x: x * x)
+    
+    where : Only yields the matching items of the preceding Iterable:
+      Usage : [1, 2, 3] | where(lambda x: x % 1 == 0)
+    
+    take_while : Like itertools.takewhile, yields elements of the preceding iterable while the predicat is true :
+      Usage : [1, 2, 3] | take_while(lambda x: x < 3)
+    
+    skip_while : Like itertools.dropwhile, skips elements of the preceding iterable while the predicat is true, then yields others
+    
+    chain_with : Like itertools.chain, yields elements of the preceding iterable, then yields elements of its parameters
+      Usage : (1, 2, 3) | chain([4, 5, 6]) gives (1, 2, 3, 4, 5, 6)
+    
+    take : Yields the given quantity of elemenets from the preceding iterable :
+      Usage : (1, 2, 3, 4, 5) | take(2) gives (1, 2)
+    
+    skip : Skips the given quantity of elements from the preceding iterable, then yields :
+      Usage : (1, 2, 3, 4, 5) | skip(2) gives (3, 4, 5)
+    
+    islice : like itertools.islice
+      Usage : assert((1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | sum == (3 + 5 + 7))
+    
+    izip : Like itertools.izip
+      Usage : assert((1,2,3,4,5,6,7,8,9)
+                         | izip([9,8,7,6,5,4,3,2,1])
+                         | select(lambda x : x[0] * x[1])
+                         | sum
+                           == (1*9 + 2*8 + 3*7 + 4*6 + 5*5 + 6*4 + 7*3 + 8*2 + 9*1))
+    
+    aggregate : Works as python reduce
+      Usage :       assert(one2nine | aggregate(lambda x, y: x * y) == 1*2*3*4*5*6*7*8*9)
+                assert(one2nine | aggregate(lambda x, y: str(x) + ', ' + str(y)) == "1, 2, 3, 4, 5, 6, 7, 8, 9")
+    
+    concat : A utility to aggregate strings using given separator, works like aggregate(lambda x, y: str(x) + separator + str(y))
+    
+    any : Returns true if any of the elements matches the given predicat
+    
+    all : Returns true if all elements matches the given predicat
+    
+    bigger : Returns the biggest element, using the given comparator
+    
+    groupby : Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
+    Usage : assert(one2nine | groupby(lambda x: x % 2 and "Even" or "Odd")
+                        | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', '))))
+                        | concat(' / ') == "Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8")
+    
+    permutations : Returns all possible permutations as :
+      'ABCD' | permutations(2) --> AB AC AD BA BC BD CA CB CD DA DB DC
+      range(3) | permutations() --> 012 021 102 120 201 210
+
+CLASSES
+    FuncPipe
+    Pipe
+    
+    class FuncPipe
+     |  Represent a Pipeable Function :
+     |  It's a function returning a Pipe
+     |  Described as :
+     |  select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+     |  and used as :
+     |  print [1, 2, 3] | select(lambda x: x * 2)
+     |  # 2, 4, 6
+     |  
+     |  Methods defined here:
+     |  
+     |  __call__(self, *value)
+     |  
+     |  __init__(self, function)
+    
+    class Pipe
+     |  Represent a Pipeable Element :
+     |  Described as :
+     |  first = Pipe(lambda iterable: iter(iterable).next())
+     |  and used as :
+     |  print [1, 2, 3] | first
+     |  printing 1
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, function)
+     |  
+     |  __ror__(self, other)
+
+DATA
+    __author__ = 'Julien Palard <julien@eeple.fr>'
+    __credits__ = 'Jerome Schneider, for his Python skill'
+    __date__ = '5 February 2010'
+    __version__ = '1.1'
+    aggregate = <pype.FuncPipe instance at 0x96d638c>
+    all = <pype.FuncPipe instance at 0x96d63ec>
+    any = <pype.FuncPipe instance at 0x96d63cc>
+    average = <pype.Pipe instance at 0x96d61cc>
+    bigger = <pype.FuncPipe instance at 0x96d640c>
+    chain = <pype.Pipe instance at 0x96d624c>
+    chain_with = <pype.FuncPipe instance at 0x96d62ec>
+    concat = <pype.FuncPipe instance at 0x96d63ac>
+    count = <pype.Pipe instance at 0x96d61ec>
+    first = <pype.Pipe instance at 0x96d622c>
+    groupby = <pype.FuncPipe instance at 0x96d642c>
+    islice = <pype.FuncPipe instance at 0x96d634c>
+    izip = <pype.FuncPipe instance at 0x96d636c>
+    lineout = <pype.Pipe instance at 0x96d61ac>
+    permutations = <pype.FuncPipe instance at 0x96d644c>
+    select = <pype.FuncPipe instance at 0x96d626c>
+    skip = <pype.FuncPipe instance at 0x96d632c>
+    skip_while = <pype.FuncPipe instance at 0x96d62cc>
+    stdout = <pype.Pipe instance at 0x96d618c>
+    sum = <pype.Pipe instance at 0x96d620c>
+    take = <pype.FuncPipe instance at 0x96d630c>
+    take_while = <pype.FuncPipe instance at 0x96d62ac>
+    where = <pype.FuncPipe instance at 0x96d628c>
+
+VERSION
+    1.1
+
+DATE
+    5 February 2010
+
+AUTHOR
+    Julien Palard <julien@eeple.fr>
+
+CREDITS
+    Jerome Schneider, for his Python skill
+
+
