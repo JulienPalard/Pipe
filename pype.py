@@ -45,8 +45,16 @@ sum : Returns the sum of all elements in the preceding Iterable
 first : Returns the first element of the preceding Iterable
 
 chain : Unfold preceding Iterable of Iterables
-  Usage : print [[1, 2], [3, 4], [5]] | chain
+  Usage : [[1, 2], [3, 4], [5]] | chain
           Gives [1, 2, 3, 4, 5]
+  Warning : chain only unfold Iterable containing ONLY Iterables :
+          [1, 2, [3]] | chain
+		  Gives a TypeError: chain argument #1 must support iteration
+		  Consider using traverse
+
+traverse : Recursively unfold Iterables
+  Usage : [[1, 2], [[[3], [[4]]], [5]]] | traverse
+          Gives 1, 2, 3, 4, 5
 
 Available FuncPipes are :
 select : Apply a conversion expression given as parameter to each element of the preceding Iterable
@@ -61,7 +69,7 @@ take_while : Like itertools.takewhile, yields elements of the preceding iterable
 skip_while : Like itertools.dropwhile, skips elements of the preceding iterable while the predicat is true, then yields others
 
 chain_with : Like itertools.chain, yields elements of the preceding iterable, then yields elements of its parameters
-  Usage : (1, 2, 3) | chain([4, 5, 6]) gives (1, 2, 3, 4, 5, 6)
+  Usage : (1, 2, 3) | chain_width([4, 5, 6]) gives (1, 2, 3, 4, 5, 6)
 
 take : Yields the given quantity of elemenets from the preceding iterable :
   Usage : (1, 2, 3, 4, 5) | take(2) gives (1, 2)
@@ -226,6 +234,14 @@ def permutations(iterable, r=None):
             return
 
 
+def _traverse_list(*args):
+	for arg in args:
+		if type(arg) == list:
+			for i in _traverse_list(*arg):
+				yield i
+		else:
+			yield arg
+
 stdout =  Pipe(lambda x: sys.stdout.write(str(x)))
 lineout = Pipe(lambda x: sys.stdout.write(str(x) + "\n"))
 average = Pipe(_average)
@@ -233,6 +249,7 @@ count =   Pipe(_count)
 sum =     Pipe(sum)
 first =   Pipe(lambda iterable: iter(iterable).next())
 chain =   Pipe(lambda x: itertools.chain(*x))
+traverse =	 Pipe(_traverse_list)
 
 select =     FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
 where =      FuncPipe(lambda iterable, pred: (x for x in iterable if pred(x)))
@@ -250,7 +267,6 @@ all =        FuncPipe(_all)
 bigger =	 FuncPipe(_max)
 groupby =    FuncPipe(lambda iterable, keyfunc: itertools.groupby(sorted(iterable, key = keyfunc), keyfunc))
 permutations = FuncPipe(permutations)
-
 
 if __name__ == "__main__":
 	import operator
@@ -291,6 +307,9 @@ if __name__ == "__main__":
 	assert(one2nine | groupby(lambda x: x % 2 and "Even" or "Odd") \
 	                | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', ')))) \
 		            | concat(' / ') == "Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8")
+
+	assert([[1], [2, 3], [4, 5]] | chain | sum == (1 + 2 + 3 + 4 + 5))
+	assert([1, [2, 3], [[[4, 5, [6, 7, 8, 9]]]]] | traverse | take(5) | sum == (1+2+3+4+5))
 
 	# Find the sum of all the multiples of 3 or 5 below 1000.
 	euler1 = (itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000) | sum) \
