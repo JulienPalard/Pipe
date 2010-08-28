@@ -201,6 +201,7 @@ Euler project samples :
 """
 
 import itertools
+from functools import reduce
 import sys
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
@@ -212,7 +213,7 @@ class Pipe:
     """
     Represent a Pipeable Element :
     Described as :
-    first = Pipe(lambda iterable: iter(iterable).next())
+    first = Pipe(lambda iterable: next(iter(iterable)))
     and used as :
     print [1, 2, 3] | first
     printing 1
@@ -313,8 +314,8 @@ def permutations(iterable, r=None):
     r = n if r is None else r
     if r > n:
         return
-    indices = range(n)
-    cycles = range(n, n-r, -1)
+    indices = list(range(n))
+    cycles = list(range(n, n-r, -1))
     yield tuple(pool[i] for i in indices[:r])
     while n:
         for i in reversed(range(r)):
@@ -374,7 +375,7 @@ def add(x):
 
 @Pipe
 def first(iterable):
-    return iter(iterable).next()
+    return next(iter(iterable))
 
 @Pipe
 def chain(iterable):
@@ -406,7 +407,12 @@ def groupby(iterable, keyfunc):
 
 chain_with = FuncPipe(itertools.chain)
 islice = FuncPipe(itertools.islice)
-izip = FuncPipe(itertools.izip)
+
+# Python 2 & 3 compatibility
+if "izip" in dir(itertools):
+    izip = FuncPipe(itertools.izip)
+else:
+    izip = FuncPipe(zip)
 
 if __name__ == "__main__":
     import doctest
