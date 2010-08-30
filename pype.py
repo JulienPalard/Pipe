@@ -172,6 +172,21 @@ groupby()
             | concat(' / ')
     'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
 
+sort()
+    Like Python's built-in "sorted" primitive.  Allows cmp (Python 2.x
+    only), key, and reverse arguments. By default sorts using the
+    identity function as the key.
+
+    >>> "python" | sort() | concat("")
+    'hnopty'
+    >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat()
+    '1, -2, 3, -4, 5'
+
+reverse
+    Like Python's built-in "reversed" primitive.
+    >>> [1, 2, 3] | reverse | concat()
+    '3, 2, 1'
+    
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -235,8 +250,8 @@ class FuncPipe:
     """
     def __init__(self, function):
         self.function = function
-    def __call__(self, *value):
-        return Pipe(lambda x: self.function(x, *value))
+    def __call__(self, *value, **kwargs):
+        return Pipe(lambda x: self.function(x, *value, **kwargs))
 
 @FuncPipe
 def take(iterable, qte):
@@ -404,6 +419,14 @@ def aggregate(iterable, function):
 @FuncPipe
 def groupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
+
+@FuncPipe
+def sort(iterable, **kwargs):
+    return sorted(iterable, **kwargs)
+
+@Pipe
+def reverse(iterable):
+    return reversed(iterable)
 
 chain_with = FuncPipe(itertools.chain)
 islice = FuncPipe(itertools.islice)
