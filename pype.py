@@ -299,13 +299,19 @@ def skip(iterable, qte):
 @FuncPipe
 def all(iterable, pred):
     "Returns True if ALL elements in the given iterable are true for the given pred function"
-    return b.all(map(pred, iterable))
+    for x in iterable:
+        if not pred(x):
+            return False
+    return True
 
 @FuncPipe
 def any(iterable, pred):
     "Returns True if ANY element in the given iterable is True for the given pred function"
-    return b.any(map(pred, iterable))
-    
+    for x in iterable:
+        if pred(x):
+            return True
+    return False
+
 @Pipe
 def average(iterable):
     """
