@@ -86,7 +86,10 @@ traverse
     Recursively unfold iterables
     >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat()
     '1, 2, 3, 4, 5'
-
+    >>> squares=(i*i for i in range(3))
+    >>> [[0,1,2], squares] | traverse | as_list
+    [0, 1, 2, 0, 1, 4]
+    
 select()
     Apply a conversion expression given as parameter
     to each element of the given iterable
@@ -381,19 +384,16 @@ def netcat(iterable, host, port):
 @Pipe
 def traverse(args):
     for arg in args:
-        if type(arg) == list:
+        try:
             for i in arg | traverse:
                 yield i
-        else:
+        except TypeError:
+            # not iterable --- output leaf
             yield arg
 
 @FuncPipe
 def concat(iterable, separator=", "):
-    try:
-        return str(iterable | aggregate(lambda x, y: str(x) + separator + str(y)))
-    except TypeError:
-        #Todo : Checker mieux que ca si la liste est vide avant de faire le aggregate
-        return ''
+    return separator.join(map(str,iterable))
 
 @Pipe
 def as_list(iterable):
