@@ -41,6 +41,12 @@ lineout
     >>> 42 | lineout
     42
 
+as_list
+    Outputs an iterable as a list
+    
+as_tuple
+    Outputs an iterable as a tuple
+
 concat()
     Aggregates strings using given separator, or ", " by default
     >>> [1, 2, 3, 4] | concat()
@@ -388,6 +394,14 @@ def concat(iterable, separator=", "):
     except TypeError:
         #Todo : Checker mieux que ca si la liste est vide avant de faire le aggregate
         return ''
+
+@Pipe
+def as_list(iterable):
+    return list(iterable)
+
+@Pipe
+def as_tuple(iterable):
+    return tuple(iterable)
 
 @Pipe
 def stdout(x):
