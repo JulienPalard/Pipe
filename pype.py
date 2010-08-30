@@ -160,9 +160,18 @@ all()
     True
 
 max()
-    Returns the biggest element, using the given comparator
-    >>> ('a', 'foo', 'qwerty', 'bar') | max(lambda x, y: len(x) - len(y))
+    Returns the biggest element, using the given key function
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
     'qwerty'
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
+    'zoog'
+
+min()
+    Returns the smallest element, using the given key function
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
+    'b'
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min()
+    'aa'
 
 groupby()
     Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
@@ -218,6 +227,12 @@ Euler project samples :
 import itertools
 from functools import reduce
 import sys
+
+try:
+    import __builtin__ as b
+except ImportError:
+    import builtins as b
+
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
 __credits__ = 'Jerome Schneider, for its Python skillz'
@@ -310,15 +325,13 @@ def count(iterable):
     return count
 
 @FuncPipe
-def max(iterable, comparator):
-    biggest = None
-    for item in iterable:
-        if biggest is None:
-            biggest = item
-        else:
-            if comparator(item, biggest) > 0:
-                biggest = item
-    return biggest
+def max(iterable, **kwargs):
+    return b.max(iterable, **kwargs)
+
+@FuncPipe
+def min(iterable, **kwargs):
+    return b.min(iterable, **kwargs)
+
 
 @FuncPipe
 def permutations(iterable, r=None):
