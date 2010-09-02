@@ -49,8 +49,10 @@ as_tuple
 
 concat()
     Aggregates strings using given separator, or ", " by default
-    >>> [1, 2, 3, 4] | concat()
+    >>> [1, 2, 3, 4] | concat
     '1, 2, 3, 4'
+    >>> [1, 2, 3, 4] | concat("#")
+    '1#2#3#4'
 
 average
     Returns the average of the given iterable
@@ -74,7 +76,7 @@ first
 
 chain
     Unfold preceding Iterable of Iterables
-    >>> [[1, 2], [3, 4], [5]] | chain | concat()
+    >>> [[1, 2], [3, 4], [5]] | chain | concat
     '1, 2, 3, 4, 5'
 
   Warning : chain only unfold iterable containing ONLY iterables :
@@ -84,7 +86,7 @@ chain
 
 traverse
     Recursively unfold iterables
-    >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat()
+    >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat
     '1, 2, 3, 4, 5'
     >>> squares=(i*i for i in range(3))
     >>> [[0,1,2], squares] | traverse | as_list
@@ -93,52 +95,52 @@ traverse
 select()
     Apply a conversion expression given as parameter
     to each element of the given iterable
-    >>> [1, 2, 3] | select(lambda x: x * x) | concat()
+    >>> [1, 2, 3] | select(lambda x: x * x) | concat
     '1, 4, 9'
 
 where()
     Only yields the matching items of the given iterable
-    >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat()
+    >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat
     '2'
 
 take_while()
     Like itertools.takewhile, yields elements of the
     given iterable while the predicat is true
-    >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat()
+    >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat
     '1, 2'
 
 skip_while()
     Like itertools.dropwhile, skips elements of the given iterable
     while the predicat is true, then yields others
-    >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat()
+    >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat
     '3, 4'
 
 chain_with()
     Like itertools.chain, yields elements of the given iterable,
     then yields elements of its parameters
-    >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat()
+    >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat
     '1, 2, 3, 4, 5, 6'
 
 take()
     Yields the given quantity of elemenets from the given iterable
-    >>> (1, 2, 3, 4, 5) | take(2) | concat()
+    >>> (1, 2, 3, 4, 5) | take(2) | concat
     '1, 2'
 
 skip()
     Skips the given quantity of elements from the given iterable, then yields
-    >>> (1, 2, 3, 4, 5) | skip(2) | concat()
+    >>> (1, 2, 3, 4, 5) | skip(2) | concat
     '3, 4, 5'
 
 islice()
     Just the itertools.islice
-    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat()
+    >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat
     '3, 5, 7'
 
 izip()
     Just the itertools.izip
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
             | izip([9, 8, 7, 6, 5, 4, 3, 2, 1]) \
-            | concat()
+            | concat
     '(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)'
 
 aggregate()
@@ -169,17 +171,23 @@ all()
     True
 
 max()
-    Returns the biggest element, using the given key function
+    Returns the biggest element, using the given key function if
+    provided (or else the identity)
+    
     >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
     'qwerty'
     >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
     'zoog'
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max
+    'zoog'
 
 min()
-    Returns the smallest element, using the given key function
+    Returns the smallest element, using the key function if provided
+    (or else the identity)
+
     >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
     'b'
-    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min()
+    >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min
     'aa'
 
 groupby()
@@ -197,12 +205,12 @@ sort()
 
     >>> "python" | sort() | concat("")
     'hnopty'
-    >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat()
+    >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
     '1, -2, 3, -4, 5'
 
 reverse
     Like Python's built-in "reversed" primitive.
-    >>> [1, 2, 3] | reverse | concat()
+    >>> [1, 2, 3] | reverse | concat
     '3, 2, 1'
     
 permutations()
@@ -210,7 +218,7 @@ permutations()
     >>> 'ABC' | permutations(2) | concat(' ')
     "('A', 'B') ('A', 'C') ('B', 'A') ('B', 'C') ('C', 'A') ('C', 'B')"
 
-    >>> range(3) | permutations() | concat('-')
+    >>> range(3) | permutations | concat('-')
     '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
 
 Euler project samples :
@@ -274,8 +282,29 @@ class FuncPipe:
     """
     def __init__(self, function):
         self.function = function
-    def __call__(self, *value, **kwargs):
-        return Pipe(lambda x: self.function(x, *value, **kwargs))
+    def __call__(self, *args, **kwargs):
+        return Pipe(lambda x: self.function(x, *args, **kwargs))
+
+class PipeyFuncPipe(Pipe,FuncPipe):
+    """
+    A PipeyFuncPipe is a FuncPipe... which is itself a Pipe!  Allows
+    syntactic simplicity when FuncPipes have a sensible default
+    configuration.  For example, PipeyFuncPipe allows:
+
+    >>> max = PipeyFuncPipe(b.max)
+    >>> [1,2,3] | max
+    3
+
+    whereas if max were a mere FuncPipe we would have been required to
+    use one of
+    
+    >>> [1,2,3] | max()
+    3
+    >>> [1,2,3] | max(key=lambda x: x)
+    3
+    """
+    pass
+    
 
 @FuncPipe
 def take(iterable, qte):
@@ -333,16 +362,16 @@ def count(iterable):
         count += 1
     return count
 
-@FuncPipe
+@PipeyFuncPipe
 def max(iterable, **kwargs):
     return b.max(iterable, **kwargs)
 
-@FuncPipe
+@PipeyFuncPipe
 def min(iterable, **kwargs):
     return b.min(iterable, **kwargs)
 
 
-@FuncPipe
+@PipeyFuncPipe
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
@@ -391,7 +420,7 @@ def traverse(args):
             # not iterable --- output leaf
             yield arg
 
-@FuncPipe
+@PipeyFuncPipe
 def concat(iterable, separator=", "):
     return separator.join(map(str,iterable))
 
