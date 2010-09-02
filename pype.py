@@ -246,9 +246,9 @@ from functools import reduce
 import sys
 
 try:
-    import __builtin__ as b
+    import builtins
 except ImportError:
-    import builtins as b
+    import __builtin__ as builtins
 
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
@@ -291,7 +291,7 @@ class PipeyFuncPipe(Pipe,FuncPipe):
     syntactic simplicity when FuncPipes have a sensible default
     configuration.  For example, PipeyFuncPipe allows:
 
-    >>> max = PipeyFuncPipe(b.max)
+    >>> max = PipeyFuncPipe(builtins.max)
     >>> [1,2,3] | max
     3
 
@@ -364,11 +364,11 @@ def count(iterable):
 
 @PipeyFuncPipe
 def max(iterable, **kwargs):
-    return b.max(iterable, **kwargs)
+    return builtins.max(iterable, **kwargs)
 
 @PipeyFuncPipe
 def min(iterable, **kwargs):
-    return b.min(iterable, **kwargs)
+    return builtins.min(iterable, **kwargs)
 
 
 @PipeyFuncPipe
