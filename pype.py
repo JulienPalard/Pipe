@@ -203,7 +203,7 @@ sort()
     only), key, and reverse arguments. By default sorts using the
     identity function as the key.
 
-    >>> "python" | sort() | concat("")
+    >>> "python" | sort | concat("")
     'hnopty'
     >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
     '1, -2, 3, -4, 5'
@@ -476,7 +476,7 @@ def aggregate(iterable, function):
 def groupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
 
-@FuncPipe
+@PipeyFuncPipe
 def sort(iterable, **kwargs):
     return sorted(iterable, **kwargs)
 
