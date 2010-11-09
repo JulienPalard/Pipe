@@ -199,7 +199,8 @@ Euler project samples :
 
 
 """
-
+from contextlib import closing
+import socket
 import itertools
 from functools import reduce
 import sys
@@ -343,6 +344,14 @@ def netcat(iterable, host, port):
             if not data: break
             buffer += data
         return buffer
+
+@FuncPipe
+def netwrite(iterable, host, port):
+    import logging
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.connect((host, port))
+        for to_send in iterable:
+            s.send(to_send)
 
 @Pipe
 def traverse(args):
