@@ -14,22 +14,24 @@ The basic symtax is to use a Pipe like in a shell :
 >>> [1, 2, 3] | add
 6
 
-Each FuncPipe is a function acting like a Pipe, for exemple where :
+Each Pipe can be a function call, for exemple where :
 >>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
 <generator object <genexpr> at ...>
 
-A FuncPipe is nothing more than a function returning a specialized Pipe,
+A Pipe as a function is nothing more than a function returning
+a specialized Pipe.
 
-You can construct your pipes using Pipe and FuncPipe classes like :
+You can construct your pipes using Pipe classe like :
 
 stdout = Pipe(lambda x: sys.stdout.write(str(x)))
-select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
 
 Or using decorators :
 @Pipe
 def stdout(x):
     sys.stdout.write(str(x))
 
+Here come some samples and documentation about existing pypes :
 
 stdout
     Outputs anything to the standard output
@@ -43,9 +45,13 @@ lineout
 
 as_list
     Outputs an iterable as a list
-    
+    >>> (0, 1, 2) | pype.as_list
+    [0, 1, 2]
+
 as_tuple
     Outputs an iterable as a tuple
+    >>> [1, 2, 3] | pype.as_tuple
+    (1, 2, 3)
 
 concat()
     Aggregates strings using given separator, or ", " by default
@@ -79,7 +85,7 @@ chain
     >>> [[1, 2], [3, 4], [5]] | chain | concat
     '1, 2, 3, 4, 5'
 
-  Warning : chain only unfold iterable containing ONLY iterables :
+    Warning : chain only unfold iterable containing ONLY iterables :
       [1, 2, [3]] | chain
           Gives a TypeError: chain argument #1 must support iteration
           Consider using traverse
@@ -88,10 +94,10 @@ traverse
     Recursively unfold iterables
     >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat
     '1, 2, 3, 4, 5'
-    >>> squares=(i*i for i in range(3))
-    >>> [[0,1,2], squares] | traverse | as_list
+    >>> squares = (i * i for i in range(3))
+    >>> [[0, 1, 2], squares] | traverse | as_list
     [0, 1, 2, 0, 1, 4]
-    
+
 select()
     Apply a conversion expression given as parameter
     to each element of the given iterable
@@ -160,7 +166,6 @@ any()
     >>> (1, 3, 5, 6, 7) | any(lambda x: x > 7)
     False
 
-
 all()
     Returns True if all elements of the given iterable
     satisfies the given predicate
@@ -173,7 +178,7 @@ all()
 max()
     Returns the biggest element, using the given key function if
     provided (or else the identity)
-    
+
     >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
     'qwerty'
     >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
@@ -212,7 +217,7 @@ reverse
     Like Python's built-in "reversed" primitive.
     >>> [1, 2, 3] | reverse | concat
     '3, 2, 1'
-    
+
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -252,9 +257,10 @@ except ImportError:
 
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
-__credits__ = 'Jerome Schneider, for its Python skillz'
-__date__ = '26 Aug 2010'
-__version__ = '1.2'
+__credits__ = """Jerome Schneider, for its Python skillz,
+and dalexander for contributing"""
+__date__ = '10 Nov 2010'
+__version__ = '1.3'
 
 class Pipe:
     """
@@ -264,49 +270,25 @@ class Pipe:
     and used as :
     print [1, 2, 3] | first
     printing 1
-    """
-    def __init__(self, function):
-        self.function = function
-    def __ror__(self, other):
-        return self.function(other)
 
-class FuncPipe:
-    """
-    Represent a Pipeable Function :
+    Or represent a Pipeable Function :
     It's a function returning a Pipe
     Described as :
-    select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+    select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
     and used as :
     print [1, 2, 3] | select(lambda x: x * 2)
     # 2, 4, 6
     """
     def __init__(self, function):
         self.function = function
+
+    def __ror__(self, other):
+        return self.function(other)
+
     def __call__(self, *args, **kwargs):
         return Pipe(lambda x: self.function(x, *args, **kwargs))
 
-class PipeyFuncPipe(Pipe,FuncPipe):
-    """
-    A PipeyFuncPipe is a FuncPipe... which is itself a Pipe!  Allows
-    syntactic simplicity when FuncPipes have a sensible default
-    configuration.  For example, PipeyFuncPipe allows:
-
-    >>> max = PipeyFuncPipe(builtins.max)
-    >>> [1,2,3] | max
-    3
-
-    whereas if max were a mere FuncPipe we would have been required to
-    use one of
-    
-    >>> [1,2,3] | max()
-    3
-    >>> [1,2,3] | max(key=lambda x: x)
-    3
-    """
-    pass
-    
-
-@FuncPipe
+@Pipe
 def take(iterable, qte):
     "Yield qte of elements in the given iterable."
     for item in iterable:
@@ -316,7 +298,7 @@ def take(iterable, qte):
         else:
             return
 
-@FuncPipe
+@Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
     for item in iterable:
@@ -325,7 +307,7 @@ def skip(iterable, qte):
         else:
             qte -= 1
 
-@FuncPipe
+@Pipe
 def all(iterable, pred):
     "Returns True if ALL elements in the given iterable are true for the given pred function"
     for x in iterable:
@@ -333,7 +315,7 @@ def all(iterable, pred):
             return False
     return True
 
-@FuncPipe
+@Pipe
 def any(iterable, pred):
     "Returns True if ANY element in the given iterable is True for the given pred function"
     for x in iterable:
@@ -362,16 +344,15 @@ def count(iterable):
         count += 1
     return count
 
-@PipeyFuncPipe
+@Pipe
 def max(iterable, **kwargs):
     return builtins.max(iterable, **kwargs)
 
-@PipeyFuncPipe
+@Pipe
 def min(iterable, **kwargs):
     return builtins.min(iterable, **kwargs)
 
-
-@PipeyFuncPipe
+@Pipe
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
@@ -397,7 +378,7 @@ def permutations(iterable, r=None):
         else:
             return
 
-@FuncPipe
+@Pipe
 def netcat(iterable, host, port):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
@@ -420,7 +401,7 @@ def traverse(args):
             # not iterable --- output leaf
             yield arg
 
-@PipeyFuncPipe
+@Pipe
 def concat(iterable, separator=", "):
     return separator.join(map(str,iterable))
 
@@ -452,31 +433,31 @@ def first(iterable):
 def chain(iterable):
     return itertools.chain(*iterable)
 
-@FuncPipe
+@Pipe
 def select(iterable, selector):
     return (selector(x) for x in iterable)
 
-@FuncPipe
+@Pipe
 def where(iterable, predicate):
     return (x for x in iterable if (predicate(x)))
 
-@FuncPipe
+@Pipe
 def take_while(iterable, predicate):
     return itertools.takewhile(predicate, iterable)
 
-@FuncPipe
+@Pipe
 def skip_while(iterable, predicate):
     return itertools.dropwhile(predicate, iterable)
 
-@FuncPipe
+@Pipe
 def aggregate(iterable, function):
     return reduce(function, iterable)
 
-@FuncPipe
+@Pipe
 def groupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
 
-@PipeyFuncPipe
+@Pipe
 def sort(iterable, **kwargs):
     return sorted(iterable, **kwargs)
 
@@ -484,14 +465,14 @@ def sort(iterable, **kwargs):
 def reverse(iterable):
     return reversed(iterable)
 
-chain_with = FuncPipe(itertools.chain)
-islice = FuncPipe(itertools.islice)
+chain_with = Pipe(itertools.chain)
+islice = Pipe(itertools.islice)
 
 # Python 2 & 3 compatibility
 if "izip" in dir(itertools):
-    izip = FuncPipe(itertools.izip)
+    izip = Pipe(itertools.izip)
 else:
-    izip = FuncPipe(zip)
+    izip = Pipe(zip)
 
 if __name__ == "__main__":
     import doctest
