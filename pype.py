@@ -392,7 +392,7 @@ def netcat(iterable, host, port):
             buffer += data
         return buffer
 
-@FuncPipe
+@Pipe
 def netwrite(iterable, host, port):
     import logging
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
