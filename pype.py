@@ -65,6 +65,20 @@ average
     >>> [1, 2, 3, 4, 5, 6] | average
     3.5
 
+netcat
+    Open a socket on the given host and port, and send data to it,
+    Yields host reponse as it come.
+    netcat apply traverse to its input so it can take a string or
+    any iterable.
+
+    "GET / HTTP/1.0\r\nHost: google.fr\r\n\r\n" \
+        | netcat('google.fr', 80)               \
+        | concat                                \
+        | stdout
+
+netwrite
+    Like netcat but don't read the socket after sending data
+
 count
     Returns the length of the given iterable, counting elements one by one
     >>> [1, 2, 3, 4, 5, 6] | count
@@ -380,32 +394,32 @@ def permutations(iterable, r=None):
             return
 
 @Pipe
-def netcat(iterable, host, port):
+def netcat(to_send, host, port):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
-        buffer = ""
-        for to_send in iterable:
-            s.send(to_send)
+        for data in to_send | traverse:
+            s.send(data)
         while 1:
             data = s.recv(4096)
             if not data: break
-            buffer += data
-        return buffer
+            yield data
 
 @Pipe
 def netwrite(iterable, host, port):
-    import logging
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
-        for to_send in iterable:
-            s.send(to_send)
+        for data in to_send | traverse:
+            s.send(data)
 
 @Pipe
 def traverse(args):
     for arg in args:
         try:
-            for i in arg | traverse:
-                yield i
+            if isinstance(arg, str):
+                yield arg
+            else:
+                for i in arg | traverse:
+                    yield i
         except TypeError:
             # not iterable --- output leaf
             yield arg
