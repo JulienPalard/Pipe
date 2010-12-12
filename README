@@ -4,7 +4,7 @@ NAME
     pype - Infix programming toolkit
 
 FILE
-    /home/mandark/home/code/python/pype/pype.py
+    pype.py
 
 DESCRIPTION
     Module enablig an infix syntax, as an exemple,
@@ -20,22 +20,24 @@ DESCRIPTION
     >>> [1, 2, 3] | add
     6
     
-    Each FuncPipe is a function acting like a Pipe, for exemple where :
+    Each Pipe can be a function call, for exemple where :
     >>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
     <generator object <genexpr> at ...>
     
-    A FuncPipe is nothing more than a function returning a specialized Pipe,
+    A Pipe as a function is nothing more than a function returning
+    a specialized Pipe.
     
-    You can construct your pipes using Pipe and FuncPipe classes like :
+    You can construct your pipes using Pipe classe like :
     
     stdout = Pipe(lambda x: sys.stdout.write(str(x)))
-    select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+    select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
     
     Or using decorators :
     @Pipe
     def stdout(x):
         sys.stdout.write(str(x))
     
+    Here come some samples and documentation about existing pypes :
     
     stdout
         Outputs anything to the standard output
@@ -47,10 +49,22 @@ DESCRIPTION
         >>> 42 | lineout
         42
     
+    as_list
+        Outputs an iterable as a list
+        >>> (0, 1, 2) | as_list
+        [0, 1, 2]
+    
+    as_tuple
+        Outputs an iterable as a tuple
+        >>> [1, 2, 3] | as_tuple
+        (1, 2, 3)
+    
     concat()
         Aggregates strings using given separator, or ", " by default
-        >>> [1, 2, 3, 4] | concat()
+        >>> [1, 2, 3, 4] | concat
         '1, 2, 3, 4'
+        >>> [1, 2, 3, 4] | concat("#")
+        '1#2#3#4'
     
     average
         Returns the average of the given iterable
@@ -74,66 +88,69 @@ DESCRIPTION
     
     chain
         Unfold preceding Iterable of Iterables
-        >>> [[1, 2], [3, 4], [5]] | chain | concat()
+        >>> [[1, 2], [3, 4], [5]] | chain | concat
         '1, 2, 3, 4, 5'
     
-      Warning : chain only unfold iterable containing ONLY iterables :
+        Warning : chain only unfold iterable containing ONLY iterables :
           [1, 2, [3]] | chain
               Gives a TypeError: chain argument #1 must support iteration
               Consider using traverse
     
     traverse
         Recursively unfold iterables
-        >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat()
+        >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat
         '1, 2, 3, 4, 5'
+        >>> squares = (i * i for i in range(3))
+        >>> [[0, 1, 2], squares] | traverse | as_list
+        [0, 1, 2, 0, 1, 4]
     
     select()
         Apply a conversion expression given as parameter
         to each element of the given iterable
-        >>> [1, 2, 3] | select(lambda x: x * x) | concat()
+        >>> [1, 2, 3] | select(lambda x: x * x) | concat
         '1, 4, 9'
     
     where()
         Only yields the matching items of the given iterable
-        >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat()
+        >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat
         '2'
     
     take_while()
         Like itertools.takewhile, yields elements of the
         given iterable while the predicat is true
-        >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat()
+        >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat
         '1, 2'
     
     skip_while()
         Like itertools.dropwhile, skips elements of the given iterable
         while the predicat is true, then yields others
-        >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat()
+        >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat
         '3, 4'
     
     chain_with()
         Like itertools.chain, yields elements of the given iterable,
         then yields elements of its parameters
-        >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat()
+        >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat
         '1, 2, 3, 4, 5, 6'
     
     take()
         Yields the given quantity of elemenets from the given iterable
-        >>> (1, 2, 3, 4, 5) | take(2) | concat()
+        >>> (1, 2, 3, 4, 5) | take(2) | concat
         '1, 2'
     
     skip()
         Skips the given quantity of elements from the given iterable, then yields
-        >>> (1, 2, 3, 4, 5) | skip(2) | concat()
+        >>> (1, 2, 3, 4, 5) | skip(2) | concat
         '3, 4, 5'
     
     islice()
         Just the itertools.islice
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat()
+        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat
         '3, 5, 7'
     
     izip()
         Just the itertools.izip
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9)             | izip([9, 8, 7, 6, 5, 4, 3, 2, 1])             | concat()
+        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9)             | izip([9, 8, 7, 6, 5, 4, 3, 2, 1])             | concat
         '(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)'
     
     aggregate()
@@ -152,7 +169,6 @@ DESCRIPTION
         >>> (1, 3, 5, 6, 7) | any(lambda x: x > 7)
         False
     
-    
     all()
         Returns True if all elements of the given iterable
         satisfies the given predicate
@@ -163,9 +179,24 @@ DESCRIPTION
         True
     
     max()
-        Returns the biggest element, using the given comparator
-        >>> ('a', 'foo', 'qwerty', 'bar') | max(lambda x, y: len(x) - len(y))
+        Returns the biggest element, using the given key function if
+        provided (or else the identity)
+    
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
         'qwerty'
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
+        'zoog'
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max
+        'zoog'
+    
+    min()
+        Returns the smallest element, using the key function if provided
+        (or else the identity)
+    
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
+        'b'
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min
+        'aa'
     
     groupby()
         Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
@@ -174,12 +205,27 @@ DESCRIPTION
                 | concat(' / ')
         'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
     
+    sort()
+        Like Python's built-in "sorted" primitive.  Allows cmp (Python 2.x
+        only), key, and reverse arguments. By default sorts using the
+        identity function as the key.
+    
+        >>> "python" | sort | concat("")
+        'hnopty'
+        >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
+        '1, -2, 3, -4, 5'
+    
+    reverse
+        Like Python's built-in "reversed" primitive.
+        >>> [1, 2, 3] | reverse | concat
+        '3, 2, 1'
+    
     permutations()
         Returns all possible permutations
         >>> 'ABC' | permutations(2) | concat(' ')
         "('A', 'B') ('A', 'C') ('B', 'A') ('B', 'C') ('C', 'A') ('C', 'B')"
     
-        >>> range(3) | permutations() | concat('-')
+        >>> range(3) | permutations | concat('-')
         '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
     
     Euler project samples :
@@ -198,79 +244,91 @@ DESCRIPTION
         assert euler6 == 25164150
 
 CLASSES
-    FuncPipe
     Pipe
     
-    class FuncPipe
-     |  Represent a Pipeable Function :
+    class Pipe
+     |  Represent a Pipeable Element :
+     |  Described as :
+     |  first = Pipe(lambda iterable: next(iter(iterable)))
+     |  and used as :
+     |  print [1, 2, 3] | first
+     |  printing 1
+     |  
+     |  Or represent a Pipeable Function :
      |  It's a function returning a Pipe
      |  Described as :
-     |  select = FuncPipe(lambda iterable, pred: (pred(x) for x in iterable))
+     |  select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
      |  and used as :
      |  print [1, 2, 3] | select(lambda x: x * 2)
      |  # 2, 4, 6
      |  
      |  Methods defined here:
      |  
-     |  __call__(self, *value)
-     |  
-     |  __init__(self, function)
-    
-    class Pipe
-     |  Represent a Pipeable Element :
-     |  Described as :
-     |  first = Pipe(lambda iterable: iter(iterable).next())
-     |  and used as :
-     |  print [1, 2, 3] | first
-     |  printing 1
-     |  
-     |  Methods defined here:
+     |  __call__(self, *args, **kwargs)
      |  
      |  __init__(self, function)
      |  
      |  __ror__(self, other)
 
+FUNCTIONS
+    reduce(...)
+        reduce(function, sequence[, initial]) -> value
+        
+        Apply a function of two arguments cumulatively to the items of a sequence,
+        from left to right, so as to reduce the sequence to a single value.
+        For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
+        ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
+        of the sequence in the calculation, and serves as a default when the
+        sequence is empty.
+
 DATA
     __author__ = 'Julien Palard <julien@eeple.fr>'
-    __credits__ = 'Jerome Schneider, for its Python skillz'
-    __date__ = '26 Aug 2010'
-    __version__ = '1.2'
+    __credits__ = 'Jerome Schneider, for its Python skillz,\nand dalexande...
+    __date__ = '10 Nov 2010'
+    __version__ = '1.3'
     add = <pype.Pipe instance>
-    aggregate = <pype.FuncPipe instance>
-    all = <pype.FuncPipe instance>
-    any = <pype.FuncPipe instance>
+    aggregate = <pype.Pipe instance>
+    all = <pype.Pipe instance>
+    any = <pype.Pipe instance>
+    as_list = <pype.Pipe instance>
+    as_tuple = <pype.Pipe instance>
     average = <pype.Pipe instance>
     chain = <pype.Pipe instance>
-    chain_with = <pype.FuncPipe instance>
-    concat = <pype.FuncPipe instance>
+    chain_with = <pype.Pipe instance>
+    concat = <pype.Pipe instance>
     count = <pype.Pipe instance>
     first = <pype.Pipe instance>
-    groupby = <pype.FuncPipe instance>
-    islice = <pype.FuncPipe instance>
-    izip = <pype.FuncPipe instance>
+    groupby = <pype.Pipe instance>
+    islice = <pype.Pipe instance>
+    izip = <pype.Pipe instance>
     lineout = <pype.Pipe instance>
-    max = <pype.FuncPipe instance>
-    netcat = <pype.FuncPipe instance>
-    permutations = <pype.FuncPipe instance>
-    select = <pype.FuncPipe instance>
-    skip = <pype.FuncPipe instance>
-    skip_while = <pype.FuncPipe instance>
+    max = <pype.Pipe instance>
+    min = <pype.Pipe instance>
+    netcat = <pype.Pipe instance>
+    netwrite = <pype.Pipe instance>
+    permutations = <pype.Pipe instance>
+    reverse = <pype.Pipe instance>
+    select = <pype.Pipe instance>
+    skip = <pype.Pipe instance>
+    skip_while = <pype.Pipe instance>
+    sort = <pype.Pipe instance>
     stdout = <pype.Pipe instance>
-    take = <pype.FuncPipe instance>
-    take_while = <pype.FuncPipe instance>
+    take = <pype.Pipe instance>
+    take_while = <pype.Pipe instance>
     traverse = <pype.Pipe instance>
-    where = <pype.FuncPipe instance>
+    where = <pype.Pipe instance>
 
 VERSION
-    1.2
+    1.3
 
 DATE
-    26 Aug 2010
+    10 Nov 2010
 
 AUTHOR
     Julien Palard <julien@eeple.fr>
 
 CREDITS
-    Jerome Schneider, for its Python skillz
+    Jerome Schneider, for its Python skillz,
+    and dalexander for contributing
 
 
