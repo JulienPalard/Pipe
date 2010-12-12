@@ -45,12 +45,12 @@ lineout
 
 as_list
     Outputs an iterable as a list
-    >>> (0, 1, 2) | pype.as_list
+    >>> (0, 1, 2) | as_list
     [0, 1, 2]
 
 as_tuple
     Outputs an iterable as a tuple
-    >>> [1, 2, 3] | pype.as_tuple
+    >>> [1, 2, 3] | as_tuple
     (1, 2, 3)
 
 concat()
