@@ -1,27 +1,43 @@
 #!/usr/bin/env python
 """ Infix programming toolkit
 
-Module enablig an infix syntax, as an exemple,
-resolving the 2nd Euler Project exercise:
+Module enablig a sh like infix syntax (using pipes).
+
+= Introduction =
+As an exemple, here is the solution for the 2nd Euler Project exercise :
+
 "Find the sum of all the even-valued terms in Fibonacci
  which do not exceed four million."
+
+Given fib a generator of fibonacci numbers :
 
 euler2 = fib() | where(lambda x: x % 2 == 0)
                | take_while(lambda x: x < 4000000)
                | add
 
+
+= Vocabulary =
+ * a Pipe: a Pipe is a 'pipeable' function, somthing that you can pipe to,
+           In the code '[1, 2, 3] | add' add is a Pipe
+ * a Pipe function: A standard function returning a Pipe so it can be used like
+           a normal Pipe but called like in : [1, 2, 3] | concat("#")
+
+
+= Syntax =
 The basic symtax is to use a Pipe like in a shell :
 >>> [1, 2, 3] | add
 6
 
-Each Pipe can be a function call, for exemple where :
+A Pipe can be a function call, for exemple the Pipe function 'where' :
 >>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
 <generator object <genexpr> at ...>
 
 A Pipe as a function is nothing more than a function returning
 a specialized Pipe.
 
-You can construct your pipes using Pipe classe like :
+
+= Constructing your own =
+You can construct your pipes using Pipe classe initialized with lambdas like :
 
 stdout = Pipe(lambda x: sys.stdout.write(str(x)))
 select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
@@ -31,7 +47,7 @@ Or using decorators :
 def stdout(x):
     sys.stdout.write(str(x))
 
-Here come some samples and documentation about existing pypes :
+= Existing Pipes in this module =
 
 stdout
     Outputs anything to the standard output
@@ -142,7 +158,8 @@ chain_with()
     '1, 2, 3, 4, 5, 6'
 
 take()
-    Yields the given quantity of elemenets from the given iterable
+    Yields the given quantity of elemenets from the given iterable, like head
+    in shell script.
     >>> (1, 2, 3, 4, 5) | take(2) | concat
     '1, 2'
 
@@ -168,6 +185,7 @@ aggregate()
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | aggregate(lambda x, y: x * y)
     362880
 
+    Simulate concat :
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
             | aggregate(lambda x, y: str(x) + ', ' + str(y))
     '1, 2, 3, 4, 5, 6, 7, 8, 9'
