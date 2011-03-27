@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ Infix programming toolkit
 
-Module enablig a sh like infix syntax (using pipes).
+Module enabling a sh like infix syntax (using pipes).
 
 = Introduction =
 As an exemple, here is the solution for the 2nd Euler Project exercise :
