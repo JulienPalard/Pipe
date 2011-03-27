@@ -1,10 +1,10 @@
-Help on module pype:
+Help on module pipe:
 
 NAME
-    pype - Infix programming toolkit
+    pipe - Infix programming toolkit
 
 FILE
-    /home/mandark/doc/code/python/pype/pype.py
+    /home/mandark/doc/code/python/pipe/pipe.py
 
 DESCRIPTION
     Module enablig a sh like infix syntax (using pipes).
@@ -318,37 +318,37 @@ DATA
     __credits__ = 'Jerome Schneider, for its Python skillz,\nand dalexande...
     __date__ = '10 Nov 2010'
     __version__ = '1.3'
-    add = <pype.Pipe instance>
-    aggregate = <pype.Pipe instance>
-    all = <pype.Pipe instance>
-    any = <pype.Pipe instance>
-    as_list = <pype.Pipe instance>
-    as_tuple = <pype.Pipe instance>
-    average = <pype.Pipe instance>
-    chain = <pype.Pipe instance>
-    chain_with = <pype.Pipe instance>
-    concat = <pype.Pipe instance>
-    count = <pype.Pipe instance>
-    first = <pype.Pipe instance>
-    groupby = <pype.Pipe instance>
-    islice = <pype.Pipe instance>
-    izip = <pype.Pipe instance>
-    lineout = <pype.Pipe instance>
-    max = <pype.Pipe instance>
-    min = <pype.Pipe instance>
-    netcat = <pype.Pipe instance>
-    netwrite = <pype.Pipe instance>
-    permutations = <pype.Pipe instance>
-    reverse = <pype.Pipe instance>
-    select = <pype.Pipe instance>
-    skip = <pype.Pipe instance>
-    skip_while = <pype.Pipe instance>
-    sort = <pype.Pipe instance>
-    stdout = <pype.Pipe instance>
-    take = <pype.Pipe instance>
-    take_while = <pype.Pipe instance>
-    traverse = <pype.Pipe instance>
-    where = <pype.Pipe instance>
+    add = <pipe.Pipe instance>
+    aggregate = <pipe.Pipe instance>
+    all = <pipe.Pipe instance>
+    any = <pipe.Pipe instance>
+    as_list = <pipe.Pipe instance>
+    as_tuple = <pipe.Pipe instance>
+    average = <pipe.Pipe instance>
+    chain = <pipe.Pipe instance>
+    chain_with = <pipe.Pipe instance>
+    concat = <pipe.Pipe instance>
+    count = <pipe.Pipe instance>
+    first = <pipe.Pipe instance>
+    groupby = <pipe.Pipe instance>
+    islice = <pipe.Pipe instance>
+    izip = <pipe.Pipe instance>
+    lineout = <pipe.Pipe instance>
+    max = <pipe.Pipe instance>
+    min = <pipe.Pipe instance>
+    netcat = <pipe.Pipe instance>
+    netwrite = <pipe.Pipe instance>
+    permutations = <pipe.Pipe instance>
+    reverse = <pipe.Pipe instance>
+    select = <pipe.Pipe instance>
+    skip = <pipe.Pipe instance>
+    skip_while = <pipe.Pipe instance>
+    sort = <pipe.Pipe instance>
+    stdout = <pipe.Pipe instance>
+    take = <pipe.Pipe instance>
+    take_while = <pipe.Pipe instance>
+    traverse = <pipe.Pipe instance>
+    where = <pipe.Pipe instance>
 
 VERSION
     1.3

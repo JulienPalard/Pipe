@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from distutils.core import setup
 setup(
-    name = 'pype',
-    packages = ['pype'],
+    name = 'pipe',
+    py_modules = ['pipe'],
     version = '1.3',
     description = 'Module enablig a sh like infix syntax (using pipes)',
     author='Julien Palard',
