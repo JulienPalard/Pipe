@@ -69,6 +69,11 @@ as_tuple
     >>> [1, 2, 3] | as_tuple
     (1, 2, 3)
 
+as_dict
+    Outputs an iterable of tuples as a dictionary
+    [('a', 1), ('b', 2), ('c', 3)] | as_dict
+    {'a': 1, 'b': 2, 'c': 3}
+
 concat()
     Aggregates strings using given separator, or ", " by default
     >>> [1, 2, 3, 4] | concat
@@ -236,7 +241,7 @@ groupby()
     'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
 
 sort()
-    Like Python's built-in "sorted" primitive.  Allows cmp (Python 2.x
+    Like Python's built-in "sorted" primitive. Allows cmp (Python 2.x
     only), key, and reverse arguments. By default sorts using the
     identity function as the key.
 
@@ -384,6 +389,10 @@ def max(iterable, **kwargs):
 @Pipe
 def min(iterable, **kwargs):
     return builtins.min(iterable, **kwargs)
+
+@Pipe
+def as_dict(iterable):
+    return dict(iterable)
 
 @Pipe
 def permutations(iterable, r=None):
