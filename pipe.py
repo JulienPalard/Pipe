@@ -168,6 +168,11 @@ take()
     >>> (1, 2, 3, 4, 5) | take(2) | concat
     '1, 2'
 
+tail()
+    Yiels the given quantity of the last elements of the given iterable.
+    >>> (1, 2, 3, 4, 5) | tail(3) | concat
+    '3, 4, 5'
+
 skip()
     Skips the given quantity of elements from the given iterable, then yields
     >>> (1, 2, 3, 4, 5) | skip(2) | concat
@@ -335,6 +340,12 @@ def take(iterable, qte):
             yield item
         else:
             return
+
+@Pipe
+def tail(iterable, qte):
+    "Yield qte of elements in the given iterable."
+    for item in (iterable | as_list)[-qte:]:
+        yield item
 
 @Pipe
 def skip(iterable, qte):
