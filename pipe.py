@@ -59,6 +59,17 @@ lineout
     >>> 42 | lineout
     42
 
+tee
+    tee outputs to the standard output and yield unchanged items, usefull for
+    debugging
+    >>> [1, 2, 3, 4, 5] | tee | add
+    1
+    2
+    3
+    4
+    5
+    15
+
 as_list
     Outputs an iterable as a list
     >>> (0, 1, 2) | as_list
@@ -481,6 +492,12 @@ def stdout(x):
 @Pipe
 def lineout(x):
     sys.stdout.write(str(x) + "\n")
+
+@Pipe
+def tee(iterable):
+    for item in iterable:
+        sys.stdout.write(str(item) + "\n")
+        yield item
 
 @Pipe
 def add(x):
