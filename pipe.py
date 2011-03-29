@@ -202,9 +202,13 @@ izip()
     '(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)'
 
 aggregate()
-    Works as python reduce
+    Works as python reduce, the optional initializer must be passed as a
+    keyword argument
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | aggregate(lambda x, y: x * y)
     362880
+
+    >>> () | aggregate(lambda x, y: x + y, initializer=0)
+    0
 
     Simulate concat :
     >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
@@ -528,9 +532,11 @@ def skip_while(iterable, predicate):
     return itertools.dropwhile(predicate, iterable)
 
 @Pipe
-def aggregate(iterable, function):
-    return reduce(function, iterable)
-
+def aggregate(iterable, function, **kwargs):
+    if 'initializer' in kwargs:
+        return reduce(function, iterable, kwargs['initializer'])
+    else:
+        return reduce(function, iterable)
 @Pipe
 def groupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
