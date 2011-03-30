@@ -319,6 +319,14 @@ __credits__ = """Jerome Schneider, for its Python skillz,
 and dalexander for contributing"""
 __date__ = '10 Nov 2010'
 __version__ = '1.4'
+__all__ = [
+    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count',
+    'max', 'min', 'as_dict', 'permutations', 'netcat', 'netwrite',
+    'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
+    'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
+    'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
+    'chain_with', 'islice', 'izip'
+]
 
 class Pipe:
     """
