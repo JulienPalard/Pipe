@@ -80,12 +80,12 @@ def fat_big_condition2(x):
 print "Normal execution :"
 xrange(4) | where(fat_big_condition1) \
           | where(fat_big_condition2) \
-          | add | lineout | add | stdout
+          | add | lineout
 
 print "Parallel with 1 worker"
 xrange(4) | parallel_where(fat_big_condition1) \
           | where(fat_big_condition2) \
-          | add | lineout | add | stdout
+          | add | lineout
 
 print "Parallel with 2 workers"
 xrange(4) | parallel_where(fat_big_condition1, qte_of_workers=2) \
