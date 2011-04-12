@@ -466,7 +466,7 @@ def netcat(to_send, host, port):
             yield data
 
 @Pipe
-def netwrite(iterable, host, port):
+def netwrite(to_send, host, port):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
         for data in to_send | traverse:
