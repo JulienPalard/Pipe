@@ -308,6 +308,10 @@ lstrip
     >>> '.,[abc] ] ' | lstrip('.,[] ')
     'abc] ] '
 
+run_with
+    >>> (1,10,2) | run_with(range) | as_list
+    [1, 3, 5, 7, 9]
+
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -359,7 +363,7 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip',
+    'lstrip', 'rstrip', 'run_with',
 ]
 
 class Pipe:
@@ -610,6 +614,10 @@ def rstrip(iterable, chars=None):
 @Pipe
 def lstrip(iterable, chars=None):
     return iterable.lstrip(chars)
+
+@Pipe
+def run_with(iterable, func):
+    return func(**iterable) if isinstance(iterable, dict) else func(*iterable)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
