@@ -305,7 +305,7 @@ lstrip
     Like Python's lstrip-method for str.
     >>> 'abc   ' | lstrip
     'abc   '
-    >>> '.,[abc] ] ' | lstrip('.,[] ')
+    >>> '.,[abc] ] ' | strip('.,[] ')
     'abc] ] '
 
 permutations()
