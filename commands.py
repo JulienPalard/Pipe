@@ -3,84 +3,19 @@
 """
 Pipe Commands.
 
-
-= Introduction =
-As an exemple, here is the solution for the 2nd Euler Project exercise :
-
-"Find the sum of all the even-valued terms in Fibonacci
- which do not exceed four million."
-
-Given fib a generator of fibonacci numbers :
-
-euler2 = fib() | where(lambda x: x % 2 == 0)
-               | take_while(lambda x: x < 4000000)
-               | add
-
-
-= Vocabulary =
- * a Pipe: a Pipe is a 'pipeable' function, somthing that you can pipe to,
-           In the code '[1, 2, 3] | add' add is a Pipe
- * a Pipe function: A standard function returning a Pipe so it can be used like
-           a normal Pipe but called like in : [1, 2, 3] | concat("#")
-
-
-= Syntax =
-The basic symtax is to use a Pipe like in a shell :
->>> [1, 2, 3] | add
-6
-
-A Pipe can be a function call, for exemple the Pipe function 'where' :
->>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
-<generator object <genexpr> at ...>
-
-A Pipe as a function is nothing more than a function returning
-a specialized Pipe.
-
-
-= Constructing your own =
-You can construct your pipes using Pipe classe initialized with lambdas like :
-
-stdout = Pipe(lambda x: sys.stdout.write(str(x)))
-select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
-
-Or using decorators :
-@Pipe
-def stdout(x):
-    sys.stdout.write(str(x))
-
-
-Euler project samples :
-
-    # Find the sum of all the multiples of 3 or 5 below 1000.
-    euler1 = (itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000) | add) \
-           + (itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000) | add) \
-           - (itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000) | add)
-    assert euler1 == 233168
-
-    # Find the sum of all the even-valued terms in Fibonacci which do not exceed four million.
-    euler2 = fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000) | add
-    assert euler2 == 4613732
-
-    # Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
-    square = lambda x: x * x
-    euler6 = square(itertools.count(1) | take(100) | add) - (itertools.count(1) | take(100) | select(square) | add)
-    assert euler6 == 25164150
-
-
 """
 from . import Pipe
 
 from contextlib import closing
 import socket
+import sys
 import itertools
 from functools import reduce
-import sys
 
 try:
     import builtins
 except ImportError:
     import __builtin__ as builtins
-
 
 @Pipe
 def take(iterable, qte):
@@ -225,19 +160,54 @@ def as_list(iterable):
 def as_tuple(iterable):
     return tuple(iterable)
 
-@Pipe
-def stdout(x):
-    sys.stdout.write(str(x))
+from collections import Iterable
 
 @Pipe
-def lineout(x):
-    sys.stdout.write(str(x) + "\n")
+def strout(inp):
+    pprint(inp)
+
+@Pipe
+def stdout(inp):
+    if not isinstance(inp, Iterable):
+        inp = str(inp)
+    if type(inp) in (str, unicode):
+        sys.stdout.write(inp + "\n")
+    else:
+        for l in inp:
+            l | stdout
+
+from pprint import pprint
+@Pipe
+def ppout(inp):
+    if type(inp) in (str, unicode):
+        pprint(inp)
+    else:
+        for l in inp:
+            pprint(l)
 
 @Pipe
 def tee(iterable):
     for item in iterable:
         sys.stdout.write(str(item) + "\n")
         yield item
+
+@Pipe
+def pptee(inp):
+    for item in inp:
+        pprint(item)
+        yield item
+
+@Pipe
+def strtee(inp):
+    print str(inp)
+    return inp
+
+@Pipe
+def pull(inp):
+    for i in inp:
+        del i
+
+#out = pull
 
 @Pipe
 def add(x):
@@ -286,6 +256,29 @@ def sort(iterable, **kwargs):
 def reverse(iterable):
     return reversed(iterable)
 
+@Pipe
+def passed(x):
+    pass
+
+@Pipe
+def index(iterable, value, start=0, stop=None):
+    return iterable.index(value, start, stop or len(iterable))
+
+@Pipe
+def strip(iterable, chars=None):
+    return iterable.strip(chars)
+
+@Pipe
+def rstrip(iterable, chars=None):
+    return iterable.rstrip(chars)
+
+@Pipe
+def lstrip(iterable, chars=None):
+    return iterable.lstrip(chars)
+
+@Pipe
+def run_with(iterable, func):
+    return func(**iterable) if isinstance(iterable, dict) else func(*iterable)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
