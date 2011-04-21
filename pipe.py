@@ -312,6 +312,16 @@ run_with
     >>> (1,10,2) | run_with(range) | as_list
     [1, 3, 5, 7, 9]
 
+t
+    Like Haskell's operator ":"
+    >>> 0 | t(1) | t(2) == range(3)
+    True
+
+to_type
+    Typecast
+    >>> range(5) | add | to_type(str) | t(' is summ!') | concat('')
+    '10 is summ!'
+
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -363,7 +373,7 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip', 'run_with',
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type',
 ]
 
 class Pipe:
@@ -617,7 +627,20 @@ def lstrip(iterable, chars=None):
 
 @Pipe
 def run_with(iterable, func):
-    return func(**iterable) if isinstance(iterable, dict) else func(*iterable)
+    return  func(**iterable) if isinstance(iterable, dict) else \
+            func( *iterable) if hasattr(iterable,'__iter__') else \
+            func(  iterable)
+
+@Pipe
+def t(iterable, y):
+    if hasattr(iterable,'__iter__'):
+        return iterable + type(iterable)([y])
+    else:
+        return [iterable, y]
+
+@Pipe
+def to_type(x, t):
+    return t(x)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
