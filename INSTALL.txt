@@ -1,0 +1,2 @@
+pipe is on PyPI ( http://pypi.python.org/pypi/pipe/ )
+So you can try `easy_install pipe`
