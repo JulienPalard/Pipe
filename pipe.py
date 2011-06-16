@@ -275,6 +275,11 @@ reverse
     >>> [1, 2, 3] | reverse | concat
     '3, 2, 1'
 
+morph
+    Like Python's built-in "map" primitive.
+    >>> [1, 2, 3] | morph(lambda x: x*x) | concat
+    '1, 4, 9'
+
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -325,7 +330,7 @@ __all__ = [
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip'
+    'chain_with', 'islice', 'izip', 'morph'
 ]
 
 class Pipe:
@@ -556,6 +561,12 @@ def sort(iterable, **kwargs):
 @Pipe
 def reverse(iterable):
     return reversed(iterable)
+
+@Pipe
+def morph(iterable,f):
+    "The 'map' function as a Pipe"
+    for item in iterable:
+        yield f(item)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
