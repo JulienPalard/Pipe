@@ -275,6 +275,53 @@ reverse
     >>> [1, 2, 3] | reverse | concat
     '3, 2, 1'
 
+passed
+    Like Python's pass.
+    >>> "something" | passed
+    
+
+index
+    Returns index of value in iterable
+    >>> [1,2,3,2,1] | index(2)
+    1
+    >>> [1,2,3,2,1] | index(1,1)
+    4
+
+strip
+    Like Python's strip-method for str.
+    >>> '  abc   ' | strip
+    'abc'
+    >>> '.,[abc] ] ' | strip('.,[] ')
+    'abc'
+
+rstrip
+    Like Python's rstrip-method for str.
+    >>> '  abc   ' | rstrip
+    '  abc'
+    >>> '.,[abc] ] ' | rstrip('.,[] ')
+    '.,[abc'
+
+lstrip
+    Like Python's lstrip-method for str.
+    >>> 'abc   ' | lstrip
+    'abc   '
+    >>> '.,[abc] ] ' | lstrip('.,[] ')
+    'abc] ] '
+
+run_with
+    >>> (1,10,2) | run_with(range) | as_list
+    [1, 3, 5, 7, 9]
+
+t
+    Like Haskell's operator ":"
+    >>> 0 | t(1) | t(2) == range(3)
+    True
+
+to_type
+    Typecast
+    >>> range(5) | add | to_type(str) | t(' is summ!') | concat('')
+    '10 is summ!'
+
 permutations()
     Returns all possible permutations
     >>> 'ABC' | permutations(2) | concat(' ')
@@ -325,7 +372,8 @@ __all__ = [
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip'
+    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type',
 ]
 
 class Pipe:
@@ -556,6 +604,43 @@ def sort(iterable, **kwargs):
 @Pipe
 def reverse(iterable):
     return reversed(iterable)
+
+@Pipe
+def passed(x):
+    pass
+
+@Pipe
+def index(iterable, value, start=0, stop=None):
+    return iterable.index(value, start, stop or len(iterable))
+
+@Pipe
+def strip(iterable, chars=None):
+    return iterable.strip(chars)
+
+@Pipe
+def rstrip(iterable, chars=None):
+    return iterable.rstrip(chars)
+
+@Pipe
+def lstrip(iterable, chars=None):
+    return iterable.lstrip(chars)
+
+@Pipe
+def run_with(iterable, func):
+    return  func(**iterable) if isinstance(iterable, dict) else \
+            func( *iterable) if hasattr(iterable,'__iter__') else \
+            func(  iterable)
+
+@Pipe
+def t(iterable, y):
+    if hasattr(iterable,'__iter__'):
+        return iterable + type(iterable)([y])
+    else:
+        return [iterable, y]
+
+@Pipe
+def to_type(x, t):
+    return t(x)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
