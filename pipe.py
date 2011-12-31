@@ -314,7 +314,7 @@ run_with
 
 t
     Like Haskell's operator ":"
-    >>> 0 | t(1) | t(2) == range(3)
+    >>> 0 | t(1) | t(2) == range(3) | as_list
     True
 
 to_type
@@ -415,9 +415,13 @@ def take(iterable, qte):
 @Pipe
 def tail(iterable, qte):
     "Yield qte of elements in the given iterable."
-    for item in (iterable | as_list)[-qte:]:
-        yield item
-
+    out = []
+    for item in iterable:
+        out.append(item)
+        if len(out) > qte:
+            out.pop(0)
+    return out
+        
 @Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
@@ -608,7 +612,7 @@ def run_with(iterable, func):
 
 @Pipe
 def t(iterable, y):
-    if hasattr(iterable,'__iter__'):
+    if hasattr(iterable,'__iter__') and not isinstance(iterable, str):
         return iterable + type(iterable)([y])
     else:
         return [iterable, y]
