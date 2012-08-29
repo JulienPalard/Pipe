@@ -30,7 +30,7 @@ DESCRIPTION
     
     
     = Syntax =
-    The basic symtax is to use a Pipe like in a shell :
+    The basic syntax is to use a Pipe like in a shell :
     >>> [1, 2, 3] | add
     6
     
