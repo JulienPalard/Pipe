@@ -278,7 +278,6 @@ reverse
 passed
     Like Python's pass.
     >>> "something" | passed
-    
 
 index
     Returns index of value in iterable
@@ -312,7 +311,6 @@ run_with
     >>> (1,10,2) | run_with(range) | as_list
     [1, 3, 5, 7, 9]
 
-t
     Like Haskell's operator ":"
     >>> 0 | t(1) | t(2) == range(3) | as_list
     True
@@ -329,6 +327,15 @@ permutations()
 
     >>> range(3) | permutations | concat('-')
     '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
+
+windowed
+    Returns iterable which yields sliding windows of containing
+    elements drawn from given iterable.
+    >>> (1, 2, 3, 4, 5, 6, 7, 8) | windowed(2) | as_list
+    [[1, 2], [3, 4], [5, 6], [7, 8]]
+
+    >>> (1, 2, 3, 4, 5, 6, 7, 8) | windowed(3) | as_list
+    [[1, 2, 3], [4, 5, 6], [7, 8]]
 
 Euler project samples :
 
@@ -372,7 +379,7 @@ __all__ = [
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
+    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
     'lstrip', 'rstrip', 'run_with', 't', 'to_type',
 ]
 
@@ -421,7 +428,7 @@ def tail(iterable, qte):
         if len(out) > qte:
             out.pop(0)
     return out
-        
+
 @Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
@@ -620,6 +627,27 @@ def t(iterable, y):
 @Pipe
 def to_type(x, t):
     return t(x)
+
+@Pipe
+def windowed(iterable, window_size):
+    if window_size <= 0:
+        raise ValueError('window_size must be positive')
+    iterator = iter(iterable)
+    i = 0
+    window = []
+    while True:
+        try:
+            current = iterator.next()
+        except StopIteration:
+            if len(window) > 0:
+                yield window
+            break
+        window.append(current)
+        i = (i + 1) % window_size
+        if i == 0:
+            yield window
+            window = []
+
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
