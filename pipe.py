@@ -514,7 +514,10 @@ def traverse(args):
 
 @Pipe
 def concat(iterable, separator=", "):
-    return separator.join(map(str,iterable))
+    try : 
+        return separator.join(map(unicode,iterable))
+    except UnicodeDecodeError:
+        return separator.join(map(str,iterable))
 
 @Pipe
 def as_list(iterable):
