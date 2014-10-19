@@ -524,7 +524,11 @@ def traverse(args):
 
 @Pipe
 def concat(iterable, separator=", "):
-    return separator.join(map(str,iterable))
+    try:
+        return separator.join(map(str,iterable))        
+    except UnicodeEncodeError:
+        # in case it's unicode no mapping is required.
+        return separator.join(iterable)
 
 @Pipe
 def as_list(iterable):
