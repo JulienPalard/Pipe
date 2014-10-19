@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name = 'pipe',
     py_modules = ['pipe'],
-    version = '1.4.1',
+    version = '1.4.2',
     description = 'Module enablig a sh like infix syntax (using pipes)',
     author='Julien Palard',
     author_email='julien@palard.fr',
