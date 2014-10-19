@@ -116,6 +116,9 @@ count
     >>> [1, 2, 3, 4, 5, 6] | count
     6
 
+    >>> (i for i in xrange(10)) | count
+    10
+
 add
     Returns the sum of all elements in the preceding iterable
     >>> (1, 2, 3, 4, 5, 6) | add
