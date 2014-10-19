@@ -116,7 +116,7 @@ count
     >>> [1, 2, 3, 4, 5, 6] | count
     6
 
-    >>> (i for i in xrange(10)) | count
+    >>> (i for i in range(10)) | count
     10
 
 add
@@ -644,7 +644,7 @@ def windowed(iterable, window_size):
     window = []
     while True:
         try:
-            current = iterator.next()
+            current = next(iterator)
         except StopIteration:
             if len(window) > 0:
                 yield window
