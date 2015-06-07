@@ -278,7 +278,7 @@ reverse
 passed
     Like Python's pass.
     >>> "something" | passed
-    
+
 
 index
     Returns index of value in iterable
@@ -372,7 +372,7 @@ __all__ = [
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
+    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
     'lstrip', 'rstrip', 'run_with', 't', 'to_type',
 ]
 
@@ -415,13 +415,8 @@ def take(iterable, qte):
 @Pipe
 def tail(iterable, qte):
     "Yield qte of elements in the given iterable."
-    out = []
-    for item in iterable:
-        out.append(item)
-        if len(out) > qte:
-            out.pop(0)
-    return out
-        
+    return iterable[-qte:]
+
 @Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
