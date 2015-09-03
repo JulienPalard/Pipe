@@ -395,6 +395,8 @@ class Pipe:
     """
     def __init__(self, function):
         self.function = function
+        self.__doc__ = function.__doc__ or ''
+
 
     def __ror__(self, other):
         return self.function(other)
