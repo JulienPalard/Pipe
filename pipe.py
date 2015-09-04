@@ -127,7 +127,7 @@ add
     21
 
 first
-    Returns the first element of the given iterable
+    Returns the first element of the given iterable, return the default value if no
     >>> (1, 2, 3, 4, 5, 6) | first
     1
 
@@ -554,8 +554,11 @@ def add(x):
     return sum(x)
 
 @Pipe
-def first(iterable):
-    return next(iter(iterable))
+def first(iterable, default=None):
+    try:
+        return next(iter(iterable))
+    except StopIteration:
+        return default
 
 @Pipe
 def chain(iterable):
