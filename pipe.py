@@ -85,6 +85,11 @@ as_dict
     [('a', 1), ('b', 2), ('c', 3)] | as_dict
     {'a': 1, 'b': 2, 'c': 3}
 
+as_set
+    Outputs an iterable of tuples as a set
+    >>> [1, 2, 2] | as_set
+    (1, 2)
+    
 concat()
     Aggregates strings using given separator, or ", " by default
     >>> [1, 2, 3, 4] | concat
@@ -525,6 +530,10 @@ def as_list(iterable):
 @Pipe
 def as_tuple(iterable):
     return tuple(iterable)
+
+@Pipe
+def as_set(iterable):
+    return set(iterable)
 
 @Pipe
 def stdout(x):
