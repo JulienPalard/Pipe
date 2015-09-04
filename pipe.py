@@ -410,7 +410,7 @@ class Pipe:
         return Pipe(lambda x: self.function(x, *args, **kwargs))
 
 @Pipe
-def take(iterable, qte):
+def take(iterable, qte=1):
     "Yield qte of elements in the given iterable."
     for item in iterable:
         if qte > 0:
@@ -420,7 +420,7 @@ def take(iterable, qte):
             return
 
 @Pipe
-def tail(iterable, qte):
+def tail(iterable, qte=1):
     "Yield qte of elements in the given iterable."
     out = []
     for item in iterable:
@@ -430,7 +430,7 @@ def tail(iterable, qte):
     return out
         
 @Pipe
-def skip(iterable, qte):
+def skip(iterable, qte=1):
     "Skip qte elements in the given iterable, then yield others."
     for item in iterable:
         if qte == 0:
