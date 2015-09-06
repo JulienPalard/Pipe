@@ -88,7 +88,7 @@ as_dict
 as_set
     Outputs an iterable of tuples as a set
     >>> [1, 2, 2] | as_set
-    (1, 2)
+    set([1, 2])
     
 concat()
     Aggregates strings using given separator, or ", " by default
@@ -378,7 +378,8 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'as_set',
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'as_set', 'last',
+    'clone',
 ]
 
 class Pipe:
@@ -401,7 +402,6 @@ class Pipe:
     def __init__(self, function):
         self.function = function
         self.__doc__ = function.__doc__ or ''
-
 
     def __ror__(self, other):
         return self.function(other)
@@ -482,6 +482,10 @@ def as_dict(iterable):
     return dict(iterable)
 
 @Pipe
+def as_set(iterable):
+    return set(iterable)
+
+@Pipe
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
@@ -532,10 +536,6 @@ def as_tuple(iterable):
     return tuple(iterable)
 
 @Pipe
-def as_set(iterable):
-    return set(iterable)
-
-@Pipe
 def stdout(x):
     sys.stdout.write(str(x))
 
@@ -559,6 +559,14 @@ def first(iterable, default=None):
         return next(iter(iterable))
     except StopIteration:
         return default
+
+@Pipe
+def last(iterable, default=None):
+    "Yield last element in the given iterable."
+    latest = default
+    for item in iterable:
+        latest = item
+    return latest
 
 @Pipe
 def chain(iterable):
@@ -637,6 +645,7 @@ def to_type(x, t):
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
+clone = Pipe(itertools.tee)
 
 # Python 2 & 3 compatibility
 if "izip" in dir(itertools):
