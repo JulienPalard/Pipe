@@ -335,6 +335,11 @@ transpose()
     >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
     [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
 
+intersect()
+    Takes the list intersection of two lists
+    >>> [1, 2, 3, 4] | intersect([2, 4, 6, 8]) | as_list
+    [2, 4]
+
 Euler project samples :
 
     # Find the sum of all the multiples of 3 or 5 below 1000.
@@ -378,7 +383,7 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose', 'intersect'
 ]
 
 class Pipe:
@@ -629,6 +634,10 @@ def to_type(x, t):
 @Pipe
 def transpose(iterable):
     return zip(*iterable)
+
+@Pipe
+def intersect(iterable1, iterable2):
+    return (x for x in iterable1 if x in iterable2)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
