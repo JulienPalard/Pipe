@@ -330,6 +330,11 @@ permutations()
     >>> range(3) | permutations | concat('-')
     '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
 
+transpose()
+    Transposes the rows and columns of a matrix
+    >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
+    [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+
 Euler project samples :
 
     # Find the sum of all the multiples of 3 or 5 below 1000.
@@ -372,8 +377,8 @@ __all__ = [
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type',
+    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
 ]
 
 class Pipe:
@@ -620,6 +625,10 @@ def t(iterable, y):
 @Pipe
 def to_type(x, t):
     return t(x)
+
+@Pipe
+def transpose(iterable):
+    return zip(*iterable)
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
