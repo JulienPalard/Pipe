@@ -10,7 +10,7 @@ DESCRIPTION
     Module enablig a sh like infix syntax (using pipes).
     
     = Introduction =
-    As an exemple, here is the solution for the 2nd Euler Project exercise :
+    As an example, here is the solution for the 2nd Euler Project exercise :
     
     "Find the sum of all the even-valued terms in Fibonacci
      which do not exceed four million."
@@ -34,7 +34,7 @@ DESCRIPTION
     >>> [1, 2, 3] | add
     6
     
-    A Pipe can be a function call, for exemple the Pipe function 'where' :
+    A Pipe can be a function call, for example the Pipe function 'where' :
     >>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
     <generator object <genexpr> at ...>
     
