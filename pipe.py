@@ -85,6 +85,11 @@ as_dict
     [('a', 1), ('b', 2), ('c', 3)] | as_dict
     {'a': 1, 'b': 2, 'c': 3}
 
+as_set
+    Outputs an iterable of tuples as a set
+    >>> [1, 2, 2] | as_set
+    set([1, 2])
+    
 concat()
     Aggregates strings using given separator, or ", " by default
     >>> [1, 2, 3, 4] | concat
@@ -122,7 +127,7 @@ add
     21
 
 first
-    Returns the first element of the given iterable
+    Returns the first element of the given iterable, return the default value if no
     >>> (1, 2, 3, 4, 5, 6) | first
     1
 
@@ -373,7 +378,8 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip', 
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type',
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'as_set', 'last',
+    'clone',
 ]
 
 class Pipe:
@@ -395,6 +401,7 @@ class Pipe:
     """
     def __init__(self, function):
         self.function = function
+        self.__doc__ = function.__doc__ or ''
 
     def __ror__(self, other):
         return self.function(other)
@@ -403,7 +410,7 @@ class Pipe:
         return Pipe(lambda x: self.function(x, *args, **kwargs))
 
 @Pipe
-def take(iterable, qte):
+def take(iterable, qte=1):
     "Yield qte of elements in the given iterable."
     for item in iterable:
         if qte > 0:
@@ -413,7 +420,7 @@ def take(iterable, qte):
             return
 
 @Pipe
-def tail(iterable, qte):
+def tail(iterable, qte=1):
     "Yield qte of elements in the given iterable."
     out = []
     for item in iterable:
@@ -423,7 +430,7 @@ def tail(iterable, qte):
     return out
         
 @Pipe
-def skip(iterable, qte):
+def skip(iterable, qte=1):
     "Skip qte elements in the given iterable, then yield others."
     for item in iterable:
         if qte == 0:
@@ -473,6 +480,10 @@ def min(iterable, **kwargs):
 @Pipe
 def as_dict(iterable):
     return dict(iterable)
+
+@Pipe
+def as_set(iterable):
+    return set(iterable)
 
 @Pipe
 def permutations(iterable, r=None):
@@ -543,8 +554,19 @@ def add(x):
     return sum(x)
 
 @Pipe
-def first(iterable):
-    return next(iter(iterable))
+def first(iterable, default=None):
+    try:
+        return next(iter(iterable))
+    except StopIteration:
+        return default
+
+@Pipe
+def last(iterable, default=None):
+    "Yield last element in the given iterable."
+    latest = default
+    for item in iterable:
+        latest = item
+    return latest
 
 @Pipe
 def chain(iterable):
@@ -623,6 +645,7 @@ def to_type(x, t):
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
+clone = Pipe(itertools.tee)
 
 # Python 2 & 3 compatibility
 if "izip" in dir(itertools):
