@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+import functools
+
+
 """ Infix programming toolkit
 
 Module enabling a sh like infix syntax (using pipes).
@@ -278,7 +282,7 @@ reverse
 passed
     Like Python's pass.
     >>> "something" | passed
-    
+
 
 index
     Returns index of value in iterable
@@ -400,6 +404,7 @@ class Pipe:
     """
     def __init__(self, function):
         self.function = function
+        functools.update_wrapper(self, function)
 
     def __ror__(self, other):
         return self.function(other)
@@ -426,7 +431,7 @@ def tail(iterable, qte):
         if len(out) > qte:
             out.pop(0)
     return out
-        
+
 @Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
