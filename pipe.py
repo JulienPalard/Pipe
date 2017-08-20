@@ -549,6 +549,14 @@ def tee(iterable):
         yield item
 
 @Pipe
+def write(iterable, fname):
+  with open(fname,'w') as f:
+    for x,item in enumerate(iterable):
+      msg = str(item) + "\n"
+      f.write(msg)
+      yield item
+
+@Pipe
 def add(x):
     return sum(x)
 
