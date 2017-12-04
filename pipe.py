@@ -30,6 +30,7 @@ __all__ = [
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
 ]
 
+
 class Pipe:
     """
     Represent a Pipeable Element :
@@ -57,6 +58,7 @@ class Pipe:
     def __call__(self, *args, **kwargs):
         return Pipe(lambda x: self.function(x, *args, **kwargs))
 
+
 @Pipe
 def take(iterable, qte):
     "Yield qte of elements in the given iterable."
@@ -66,6 +68,7 @@ def take(iterable, qte):
             yield item
         else:
             return
+
 
 @Pipe
 def tail(iterable, qte):
@@ -77,6 +80,7 @@ def tail(iterable, qte):
             out.pop(0)
     return out
 
+
 @Pipe
 def skip(iterable, qte):
     "Skip qte elements in the given iterable, then yield others."
@@ -86,48 +90,57 @@ def skip(iterable, qte):
         else:
             qte -= 1
 
+
 @Pipe
 def all(iterable, pred):
-    "Returns True if ALL elements in the given iterable are true for the given pred function"
+    """Returns True if ALL elements in the given iterable are true for the
+    given pred function"""
     return builtins.all(pred(x) for x in iterable)
+
 
 @Pipe
 def any(iterable, pred):
-    "Returns True if ANY element in the given iterable is True for the given pred function"
+    """Returns True if ANY element in the given iterable is True for the
+    given pred function"""
     return builtins.any(pred(x) for x in iterable)
+
 
 @Pipe
 def average(iterable):
-    """
-    Build the average for the given iterable, starting with 0.0 as seed
+    """Build the average for the given iterable, starting with 0.0 as seed
     Will try a division by 0 if the iterable is empty...
     """
     total = 0.0
     qte = 0
-    for x in iterable:
-        total += x
+    for element in iterable:
+        total += element
         qte += 1
     return total / qte
+
 
 @Pipe
 def count(iterable):
     "Count the size of the given iterable, walking thrue it."
     count = 0
-    for x in iterable:
+    for element in iterable:
         count += 1
     return count
+
 
 @Pipe
 def max(iterable, **kwargs):
     return builtins.max(iterable, **kwargs)
 
+
 @Pipe
 def min(iterable, **kwargs):
     return builtins.min(iterable, **kwargs)
 
+
 @Pipe
 def as_dict(iterable):
     return dict(iterable)
+
 
 @Pipe
 def permutations(iterable, r=None):
@@ -135,6 +148,7 @@ def permutations(iterable, r=None):
     # permutations(range(3)) --> 012 021 102 120 201 210
     for x in itertools.permutations(iterable, r):
         yield x
+
 
 @Pipe
 def netcat(to_send, host, port):
@@ -144,8 +158,10 @@ def netcat(to_send, host, port):
             s.send(data)
         while 1:
             data = s.recv(4096)
-            if not data: break
+            if not data:
+                break
             yield data
+
 
 @Pipe
 def netwrite(to_send, host, port):
@@ -153,6 +169,7 @@ def netwrite(to_send, host, port):
         s.connect((host, port))
         for data in to_send | traverse:
             s.send(data)
+
 
 @Pipe
 def traverse(args):
@@ -167,25 +184,31 @@ def traverse(args):
             # not iterable --- output leaf
             yield arg
 
+
 @Pipe
 def concat(iterable, separator=", "):
-    return separator.join(map(str,iterable))
+    return separator.join(map(str, iterable))
+
 
 @Pipe
 def as_list(iterable):
     return list(iterable)
 
+
 @Pipe
 def as_tuple(iterable):
     return tuple(iterable)
+
 
 @Pipe
 def stdout(x):
     sys.stdout.write(str(x))
 
+
 @Pipe
 def lineout(x):
     sys.stdout.write(str(x) + "\n")
+
 
 @Pipe
 def tee(iterable):
@@ -193,92 +216,112 @@ def tee(iterable):
         sys.stdout.write(str(item) + "\n")
         yield item
 
+
 @Pipe
 def add(x):
     return sum(x)
+
 
 @Pipe
 def first(iterable):
     return next(iter(iterable))
 
+
 @Pipe
 def chain(iterable):
     return itertools.chain(*iterable)
+
 
 @Pipe
 def select(iterable, selector):
     return (selector(x) for x in iterable)
 
+
 @Pipe
 def where(iterable, predicate):
     return (x for x in iterable if (predicate(x)))
+
 
 @Pipe
 def take_while(iterable, predicate):
     return itertools.takewhile(predicate, iterable)
 
+
 @Pipe
 def skip_while(iterable, predicate):
     return itertools.dropwhile(predicate, iterable)
+
 
 @Pipe
 def aggregate(iterable, function, **kwargs):
     if 'initializer' in kwargs:
         return functools.reduce(function, iterable, kwargs['initializer'])
-    else:
-        return functools.reduce(function, iterable)
+    return functools.reduce(function, iterable)
+
+
 @Pipe
 def groupby(iterable, keyfunc):
-    return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
+    return itertools.groupby(sorted(iterable, key=keyfunc), keyfunc)
+
 
 @Pipe
 def sort(iterable, **kwargs):
     return sorted(iterable, **kwargs)
 
+
 @Pipe
 def reverse(iterable):
     return reversed(iterable)
+
 
 @Pipe
 def passed(x):
     pass
 
+
 @Pipe
 def index(iterable, value, start=0, stop=None):
     return iterable.index(value, start, stop or len(iterable))
+
 
 @Pipe
 def strip(iterable, chars=None):
     return iterable.strip(chars)
 
+
 @Pipe
 def rstrip(iterable, chars=None):
     return iterable.rstrip(chars)
+
 
 @Pipe
 def lstrip(iterable, chars=None):
     return iterable.lstrip(chars)
 
+
 @Pipe
 def run_with(iterable, func):
-    return  func(**iterable) if isinstance(iterable, dict) else \
-            func( *iterable) if hasattr(iterable,'__iter__') else \
-            func(  iterable)
+    return (func(**iterable) if isinstance(iterable, dict) else
+            func(*iterable) if hasattr(iterable, '__iter__') else
+            func(iterable))
+
 
 @Pipe
 def t(iterable, y):
-    if hasattr(iterable,'__iter__') and not isinstance(iterable, str):
+    if hasattr(iterable, '__iter__') and not isinstance(iterable, str):
         return iterable + type(iterable)([y])
-    else:
-        return [iterable, y]
+    return [iterable, y]
+
 
 @Pipe
 def to_type(x, t):
     return t(x)
 
+
 @Pipe
 def transpose(iterable):
-    return zip(*iterable)
+    return list(zip(*iterable))
+
 
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
