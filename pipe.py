@@ -2,11 +2,12 @@
 
 """Module enabling a sh like infix syntax (using pipes).
 """
-from contextlib import closing
-import socket
+
+import functools
 import itertools
-from functools import reduce
+import socket
 import sys
+from contextlib import closing
 
 try:
     import builtins
@@ -223,9 +224,9 @@ def skip_while(iterable, predicate):
 @Pipe
 def aggregate(iterable, function, **kwargs):
     if 'initializer' in kwargs:
-        return reduce(function, iterable, kwargs['initializer'])
+        return functools.reduce(function, iterable, kwargs['initializer'])
     else:
-        return reduce(function, iterable)
+        return functools.reduce(function, iterable)
 @Pipe
 def groupby(iterable, keyfunc):
     return itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
