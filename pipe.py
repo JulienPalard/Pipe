@@ -549,12 +549,11 @@ def tee(iterable):
         yield item
 
 @Pipe
-def write(iterable, fname):
-  with open(fname,'w') as f:
-    for x,item in enumerate(iterable):
-      msg = str(item) + "\n"
-      f.write(msg)
-      yield item
+def write(iterable, fname, glue='\n'):
+    with open(fname, 'w') as f:
+        for item in iterable:
+            f.write(str(item) + glue)
+            yield item
 
 @Pipe
 def add(x):
