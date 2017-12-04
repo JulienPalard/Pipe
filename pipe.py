@@ -222,7 +222,7 @@ def write(iterable, fname, glue='\n'):
     with open(fname, 'w') as f:
         for item in iterable:
             f.write(str(item) + glue)
-            yield item
+
 
 @Pipe
 def add(x):
