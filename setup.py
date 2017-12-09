@@ -9,6 +9,7 @@ setup(
     author_email='julien@palard.fr',
     url='https://github.com/JulienPalard/Pipe',
     download_url='https://github.com/JulienPalard/Pipe/tarball/master',
+    requires=['lazy'],
     long_description="""Pipe is a module enablig a sh like infix syntax (using pipes)'.
 
 As an exemple, here is the solution for the 2nd Euler Project exercise :

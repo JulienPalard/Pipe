@@ -2,6 +2,7 @@
 
 import functools
 
+import lazy as lazy
 
 """ Infix programming toolkit
 
@@ -385,7 +386,7 @@ __all__ = [
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
 ]
 
-class Pipe:
+class Pipe(lazy.lazy):
     """
     Represent a Pipeable Element :
     Described as :
@@ -404,14 +405,16 @@ class Pipe:
     """
     def __init__(self, function):
         self.function = function
-        functools.update_wrapper(self, function)
+        super(Pipe, self).__init__(func=self.bind)
 
     def __ror__(self, other):
         return self.function(other)
 
     def __call__(self, *args, **kwargs):
-        return Pipe(lambda x: self.function(x, *args, **kwargs))
+        return type(self)(lambda x: self.function(x, *args, **kwargs))
 
+    def bind(self, instance):
+        return type(self)(lambda x: self.function(instance, x))
 @Pipe
 def take(iterable, qte):
     "Yield qte of elements in the given iterable."
