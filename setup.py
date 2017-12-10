@@ -1,36 +1,30 @@
 #!/usr/bin/env python
-from distutils.core import setup
+
+from setuptools import setup
+
+with open('README.md') as readme_file:
+    readme = readme_file.read()
+
 setup(
-    name = 'pipe',
-    py_modules = ['pipe'],
-    version = '1.4.2',
-    description = 'Module enablig a sh like infix syntax (using pipes)',
+    name='pipe',
+    py_modules=['pipe'],
+    version='1.4.3',
+    description='Module enablig a sh like infix syntax (using pipes)',
     author='Julien Palard',
     author_email='julien@palard.fr',
     url='https://github.com/JulienPalard/Pipe',
     download_url='https://github.com/JulienPalard/Pipe/tarball/master',
-    long_description="""Pipe is a module enablig a sh like infix syntax (using pipes)'.
-
-As an exemple, here is the solution for the 2nd Euler Project exercise :
-
-"Find the sum of all the even-valued terms in Fibonacci
- which do not exceed four million."
-
-Given fib a generator of fibonacci numbers ::
-
-    euler2 = fib() | where(lambda x: x % 2 == 0)
-                   | take_while(lambda x: x < 4000000)
-                   | add
-
-""",
-    classifiers = [
+    long_description=readme,
+    long_description_content_type='text/markdown; charset=UTF-8',
+    license='MIT license',
+    classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Topic :: Software Development",
         "Topic :: Software Development :: Libraries :: Python Modules"
-        ]
+    ]
 )
