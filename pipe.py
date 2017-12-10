@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-
 import functools
-
-import lazy as lazy
 
 """ Infix programming toolkit
 
@@ -386,7 +383,7 @@ __all__ = [
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
 ]
 
-class Pipe(lazy.lazy):
+class Pipe(object):
     """
     Represent a Pipeable Element :
     Described as :
@@ -403,18 +400,37 @@ class Pipe(lazy.lazy):
     print [1, 2, 3] | select(lambda x: x * 2)
     # 2, 4, 6
     """
-    def __init__(self, function):
-        self.function = function
-        super(Pipe, self).__init__(func=self.bind)
+    def __init__(self, decorated):
+        if hasattr(decorated, '__func__'):
+            # For static- and classmethods
+            functools.wraps(decorated.__func__)(self)
+        elif hasattr(decorated, '__name__'):
+            functools.wraps(decorated)(self)
+        else:
+            # For callable objects
+            functools.wraps(type(decorated))(self)
+
+        self.decorated = decorated
+
 
     def __ror__(self, other):
-        return self.function(other)
+        return self.decorated(other)
 
     def __call__(self, *args, **kwargs):
-        return type(self)(lambda x: self.function(x, *args, **kwargs))
+        return type(self)(lambda x: self.decorated(x, *args, **kwargs))
 
-    def bind(self, instance):
-        return type(self)(lambda x: self.function(instance, x))
+    def __get__(self, instance, owner):
+        # For any decorated which is also a descriptor
+        if hasattr(self.decorated, '__get__'):
+            function_to_pipe = self.decorated.__get__(instance, owner)
+        else:
+            function_to_pipe = self.decorated
+
+        return type(self)(function_to_pipe)
+
+    def bind(self, instance_or_class):
+        return type(self)(lambda x: self.decorated(instance_or_class, x))
+
 @Pipe
 def take(iterable, qte):
     "Yield qte of elements in the given iterable."
