@@ -67,16 +67,12 @@ class Pipe(object):
         return type(self)(lambda x: self.decorated(x, *args, **kwargs))
 
     def __get__(self, instance, owner):
-        # For any decorated which is also a descriptor
-        if hasattr(self.decorated, '__get__'):
-            function_to_pipe = self.decorated.__get__(instance, owner)
-        else:
-            function_to_pipe = self.decorated
-
-        return type(self)(function_to_pipe)
-
-    def bind(self, instance_or_class):
-        return type(self)(lambda x: self.decorated(instance_or_class, x))
+        """
+        For any decorated which is also a descriptor (e.g. any function is always one) 
+        delegates call to its __get__() method
+        and then use the result to cunstruct another Pipe 
+        """
+        return type(self)(self.decorated.__get__(instance, owner))
 
 
 @Pipe
