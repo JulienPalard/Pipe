@@ -50,11 +50,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual([2, 4, 6],
                          [1, 2, 3] | instance.calc)
 
-    def test_access_from_class(self):
-        instance = C()
-        self.assertEqual([2, 4, 6],
-                         [1, 2, 3] | C.calc.bind(instance))
-
     def test_access_from_classmethod(self):
         self.assertEqual([2, 4, 6],
                          [1, 2, 3] | C.class_calc)
