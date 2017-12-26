@@ -7,13 +7,13 @@ import functools
 import itertools
 import socket
 import sys
+import inspect
 from contextlib import closing
 
 try:
     import builtins
 except ImportError:
     import __builtin__ as builtins
-
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
 __credits__ = """Jerome Schneider, for its Python skillz,
@@ -29,6 +29,59 @@ __all__ = [
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
 ]
+
+__lambda_name__ = '<lambda>'
+
+
+def is_lambda(f):
+    return f.__name__ == __lambda_name__
+
+
+def is_to_destruct(f):
+    if not callable(f):
+        raise TypeError('Not callable argument!')
+    try:
+        if getattr(f, '__code__', None) is None:
+            return False
+            # We cannot make sure that if we should destruct params when this callable object doesn't have '__code__' attribute.
+        arg_info = inspect.getfullargspec(f)
+    except TypeError:
+        # As for builtin callable objects which cannot be inpected, We take them as single-parameter functions by default.
+        return False
+
+    if not is_lambda(f):
+        # If it's not a `lambda`, we should handle default arguments, keyword argument and star argument.
+        # There is a safe way to destruct parameters:
+        # We should ensure that, if we couldn't judge whether we should destruct the parameter,
+        #    take it as a single-parameter function.
+        # And if there are at least two non-default formal arguments, the only actual parameter should be destructed.
+        if arg_info.varargs or arg_info.kwonlyargs or arg_info.defaults:
+            return False
+        n = len(arg_info.args)
+    else:
+        # When it's a `lambda`, the judgement could be easier:
+        # If `varargs` has any `varargs`, the parameter should be destructed.
+        # If there are at least two formal arguments(normal arguments and default ones),
+        #    the only actual parameter should be destructed.
+        if arg_info.varargs:
+            return True
+        n = len(arg_info.args) + len(arg_info.kwonlyargs)
+
+    if n is 0:
+        raise TypeError('Function can not be with zero parameter.')
+    return n is not 1
+
+
+def destruct_func(f):
+    # An example:
+    # (1, 2) | Pipe(lambda x, y: x+y)
+    # => 3
+    def destruct(e):
+        return f(*e)
+    if is_to_destruct(f):
+        functools.update_wrapper(destruct, f)
+        return destruct
+    return f
 
 
 class Pipe:
@@ -48,6 +101,7 @@ class Pipe:
     print [1, 2, 3] | select(lambda x: x * 2)
     # 2, 4, 6
     """
+
     def __init__(self, function):
         self.function = function
         functools.update_wrapper(self, function)
@@ -95,6 +149,7 @@ def skip(iterable, qte):
 def all(iterable, pred):
     """Returns True if ALL elements in the given iterable are true for the
     given pred function"""
+    pred = destruct_func(pred)
     return builtins.all(pred(x) for x in iterable)
 
 
@@ -102,6 +157,7 @@ def all(iterable, pred):
 def any(iterable, pred):
     """Returns True if ANY element in the given iterable is True for the
     given pred function"""
+    pred = destruct_func(pred)
     return builtins.any(pred(x) for x in iterable)
 
 
@@ -241,21 +297,25 @@ def chain(iterable):
 
 @Pipe
 def select(iterable, selector):
+    selector = destruct_func(selector)
     return (selector(x) for x in iterable)
 
 
 @Pipe
 def where(iterable, predicate):
+    predicate = destruct_func(predicate)
     return (x for x in iterable if (predicate(x)))
 
 
 @Pipe
 def take_while(iterable, predicate):
+    predicate = destruct_func(predicate)
     return itertools.takewhile(predicate, iterable)
 
 
 @Pipe
 def skip_while(iterable, predicate):
+    predicate = destruct_func(predicate)
     return itertools.dropwhile(predicate, iterable)
 
 
@@ -263,11 +323,13 @@ def skip_while(iterable, predicate):
 def aggregate(iterable, function, **kwargs):
     if 'initializer' in kwargs:
         return functools.reduce(function, iterable, kwargs['initializer'])
+    function = destruct_func(function)
     return functools.reduce(function, iterable)
 
 
 @Pipe
 def groupby(iterable, keyfunc):
+    keyfunc = destruct_func(keyfunc)
     return itertools.groupby(sorted(iterable, key=keyfunc), keyfunc)
 
 
@@ -341,4 +403,5 @@ else:
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testfile('README.md')
