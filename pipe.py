@@ -78,8 +78,10 @@ def destruct_func(f):
     # => 3
     def destruct(e):
         return f(*e)
-
-    return destruct
+    if is_to_destruct(f):
+        functools.update_wrapper(destruct, f)
+        return destruct
+    return f
 
 
 class Pipe:
@@ -101,7 +103,7 @@ class Pipe:
     """
 
     def __init__(self, function):
-        self.function = destruct_func(function) if is_to_destruct(function) else function
+        self.function = function
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):
@@ -147,6 +149,7 @@ def skip(iterable, qte):
 def all(iterable, pred):
     """Returns True if ALL elements in the given iterable are true for the
     given pred function"""
+    pred = destruct_func(pred)
     return builtins.all(pred(x) for x in iterable)
 
 
@@ -154,6 +157,7 @@ def all(iterable, pred):
 def any(iterable, pred):
     """Returns True if ANY element in the given iterable is True for the
     given pred function"""
+    pred = destruct_func(pred)
     return builtins.any(pred(x) for x in iterable)
 
 
@@ -293,21 +297,25 @@ def chain(iterable):
 
 @Pipe
 def select(iterable, selector):
+    selector = destruct_func(selector)
     return (selector(x) for x in iterable)
 
 
 @Pipe
 def where(iterable, predicate):
+    predicate = destruct_func(predicate)
     return (x for x in iterable if (predicate(x)))
 
 
 @Pipe
 def take_while(iterable, predicate):
+    predicate = destruct_func(predicate)
     return itertools.takewhile(predicate, iterable)
 
 
 @Pipe
 def skip_while(iterable, predicate):
+    predicate = destruct_func(predicate)
     return itertools.dropwhile(predicate, iterable)
 
 
@@ -315,11 +323,13 @@ def skip_while(iterable, predicate):
 def aggregate(iterable, function, **kwargs):
     if 'initializer' in kwargs:
         return functools.reduce(function, iterable, kwargs['initializer'])
+    function = destruct_func(function)
     return functools.reduce(function, iterable)
 
 
 @Pipe
 def groupby(iterable, keyfunc):
+    keyfunc = destruct_func(keyfunc)
     return itertools.groupby(sorted(iterable, key=keyfunc), keyfunc)
 
 
