@@ -12,9 +12,9 @@ As an exemple, here is the solution for the 2nd Euler Project exercise:
 
 Given fib a generator of fibonacci numbers:
 
-    euler2 = fib() | where(lambda x: x % 2 == 0)
-                   | take_while(lambda x: x < 4000000)
-                   | add
+    euler2 = (fib() | where(lambda x: x % 2 == 0)
+                    | take_while(lambda x: x < 4000000)
+                    | add)
 
 
 # Vocabulary
