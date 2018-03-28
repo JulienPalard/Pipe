@@ -90,6 +90,16 @@ def skip(iterable, qte):
         else:
             qte -= 1
 
+@Pipe
+def dedup(iterable):
+    """Only yield unique items. Rely on __hash__ of the item type to find duplication."""
+    seen = set()
+    for item in iterable:
+        if item in seen:
+            continue
+        else:
+            seen.add(item)
+            yield item
 
 @Pipe
 def all(iterable, pred):
