@@ -27,7 +27,8 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose',
+    'dedup', 'uniq',
 ]
 
 
