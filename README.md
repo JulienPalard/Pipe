@@ -283,6 +283,18 @@ Or using decorators:
         >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
         '1, -2, 3, -4, 5'
 
+    dedup()
+        Deduplicate values
+
+        >>> [1,1,2,2,3,3,1,2,3] | uniq | as_list
+        [1, 2, 3,]
+
+    uniq()
+        Like dedup() but only deduplicate consecutive values.
+
+        >>> [1,1,2,2,3,3,1,2,3] | uniq | as_list
+        [1, 2, 3, 1, 2, 3]
+
     reverse
         Like Python's built-in "reversed" primitive.
         >>> [1, 2, 3] | reverse | concat
