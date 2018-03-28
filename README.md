@@ -5,7 +5,7 @@ Module enabling a sh like infix syntax (using pipes).
 
 # Introduction
 
-As an exemple, here is the solution for the 2nd Euler Project exercise:
+As an example, here is the solution for the 2nd Euler Project exercise:
 
 > Find the sum of all the even-valued terms in Fibonacci which do not
   exceed four million.
@@ -32,7 +32,7 @@ will be OK, so:
 
     >>> from pipe import *
 
-The basic symtax is to use a Pipe like in a shell:
+The basic syntax is to use a Pipe like in a shell:
 
     >>> [1, 2, 3] | add
     6
