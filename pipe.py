@@ -107,7 +107,7 @@ def uniq(iterable):
     try:
         prev = next(iterator)
     except StopIteration:
-        return []
+        pass 
     yield prev
     for item in iterator:
         if item != prev:
