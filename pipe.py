@@ -27,7 +27,8 @@ __all__ = [
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose'
+    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose',
+    'dedup', 'uniq',
 ]
 
 
@@ -90,6 +91,28 @@ def skip(iterable, qte):
         else:
             qte -= 1
 
+@Pipe
+def dedup(iterable):
+    """Only yield unique items. Use a set to keep track of duplicate data."""
+    seen = set()
+    for item in iterable:
+        if item not in seen:
+            seen.add(item)
+            yield item
+
+@Pipe
+def uniq(iterable):
+    """Deduplicate consecutive duplicate values."""
+    iterator = iter(iterable)
+    try:
+        prev = next(iterator)
+    except StopIteration:
+        return
+    yield prev
+    for item in iterator:
+        if item != prev:
+            yield item
+        prev = item
 
 @Pipe
 def all(iterable, pred):
