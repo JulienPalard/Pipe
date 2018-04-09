@@ -98,6 +98,11 @@ Or using decorators:
         [('a', 1), ('b', 2), ('c', 3)] | as_dict
         {'a': 1, 'b': 2, 'c': 3}
 
+    as_set
+        Outputs an iterable as a set
+        >>> [1, 2, 3, 1, 2, 3] | as_set
+        {1, 2, 3}
+
     concat()
         Aggregates strings using given separator, or ", " by default
         >>> [1, 2, 3, 4] | concat
