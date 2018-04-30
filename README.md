@@ -233,41 +233,41 @@ Or using decorators:
         ... | aggregate(lambda x, y: str(x) + ', ' + str(y))
         '1, 2, 3, 4, 5, 6, 7, 8, 9'
 
-    any()
+    pany()
         Returns True if any element of the given iterable satisfies the predicate
-        >>> (1, 3, 5, 6, 7) | any(lambda x: x >= 7)
+        >>> (1, 3, 5, 6, 7) | pany(lambda x: x >= 7)
         True
 
-        >>> (1, 3, 5, 6, 7) | any(lambda x: x > 7)
+        >>> (1, 3, 5, 6, 7) | pany(lambda x: x > 7)
         False
 
-    all()
+    pall()
         Returns True if all elements of the given iterable
         satisfies the given predicate
-        >>> (1, 3, 5, 6, 7) | all(lambda x: x < 7)
+        >>> (1, 3, 5, 6, 7) | pall(lambda x: x < 7)
         False
 
-        >>> (1, 3, 5, 6, 7) | all(lambda x: x <= 7)
+        >>> (1, 3, 5, 6, 7) | pall(lambda x: x <= 7)
         True
 
-    max()
+    pmax()
         Returns the biggest element, using the given key function if
         provided (or else the identity)
 
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax(key=len)
         'qwerty'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax()
         'zoog'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmax
         'zoog'
 
-    min()
+    pmin()
         Returns the smallest element, using the key function if provided
         (or else the identity)
 
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmin(key=len)
         'b'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min
+        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | pmin
         'aa'
 
     groupby()
