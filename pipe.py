@@ -21,8 +21,8 @@ and dalexander for contributing"""
 __date__ = '10 Nov 2010'
 __version__ = '1.4.2'
 __all__ = [
-    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count',
-    'max', 'min', 'as_dict', 'as_set', 'permutations', 'netcat', 'netwrite',
+    'Pipe', 'take', 'tail', 'skip', 'pall', 'pany', 'average', 'count',
+    'pmax', 'pmin', 'as_dict', 'as_set', 'permutations', 'netcat', 'netwrite',
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
@@ -115,14 +115,14 @@ def uniq(iterable):
         prev = item
 
 @Pipe
-def all(iterable, pred):
+def pall(iterable, pred):
     """Returns True if ALL elements in the given iterable are true for the
     given pred function"""
     return builtins.all(pred(x) for x in iterable)
 
 
 @Pipe
-def any(iterable, pred):
+def pany(iterable, pred):
     """Returns True if ANY element in the given iterable is True for the
     given pred function"""
     return builtins.any(pred(x) for x in iterable)
@@ -151,12 +151,12 @@ def count(iterable):
 
 
 @Pipe
-def max(iterable, **kwargs):
+def pmax(iterable, **kwargs):
     return builtins.max(iterable, **kwargs)
 
 
 @Pipe
-def min(iterable, **kwargs):
+def pmin(iterable, **kwargs):
     return builtins.min(iterable, **kwargs)
 
 
