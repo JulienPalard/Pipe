@@ -28,7 +28,7 @@ __all__ = [
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose',
-    'dedup', 'uniq',
+    'dedup', 'uniq', 'as_items', 'map_value', 'swap', 'argmax', 'argmin',
 ]
 
 
@@ -274,6 +274,28 @@ def select(iterable, selector):
 def where(iterable, predicate):
     return (x for x in iterable if (predicate(x)))
 
+@Pipe
+def as_items(d):
+    return iter(d.items())
+
+@Pipe
+def map_value(items, f):
+    for k, v in (items.items() if isinstance(items, dict) else items):
+        yield (k, f(v))
+
+def _swap(items):
+    for k, v in (items.items() if isinstance(items, dict) else items):
+        yield (v, k)
+
+swap = Pipe(_swap)
+
+@Pipe
+def argmax(items, **kwargs):
+    return builtins.max(_swap(items), **kwargs)[1]
+
+@Pipe
+def argmin(items, **kwargs):
+    return builtins.min(_swap(items), **kwargs)[1]
 
 @Pipe
 def take_while(iterable, predicate):
