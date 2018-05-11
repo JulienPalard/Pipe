@@ -104,7 +104,7 @@ Or using decorators:
         {1, 2, 3}
 
     as_items
-        Outputs an iterable of tuples of a dictioanary
+        Outputs an iterator of tuples of a dictioanary
         >>> {'a': 1, 'b': 2, 'c': 3} | as_items | as_list
         [('a', 1), ('b', 2), ('c', 3)]
 
@@ -381,7 +381,7 @@ Or using decorators:
         {1: 'a', 2: 'b'}
 
     argmax, argmin
-        Return the key corresponding to the max/min value in the dict, using the key function if provided 
+        Return the key corresponding to the max/min value in the dict, using the key function if provided
 
 # Euler project samples
 
