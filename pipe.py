@@ -289,13 +289,15 @@ def _swap(items):
 
 swap = Pipe(_swap)
 
-@Pipe
-def argmax(items, **kwargs):
-    return builtins.max(_swap(items), **kwargs)[1]
+_identity = lambda x: x
 
 @Pipe
-def argmin(items, **kwargs):
-    return builtins.min(_swap(items), **kwargs)[1]
+def argmax(items, key=_identity):
+    return builtins.max(_swap(items), key=lambda p: key(p[0]))[1]
+
+@Pipe
+def argmin(items, key=_identity):
+    return builtins.min(_swap(items), key=lambda p: key(p[0]))[1]
 
 @Pipe
 def take_while(iterable, predicate):
