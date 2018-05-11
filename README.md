@@ -95,13 +95,18 @@ Or using decorators:
 
     as_dict
         Outputs an iterable of tuples as a dictionary
-        [('a', 1), ('b', 2), ('c', 3)] | as_dict
+        >>> [('a', 1), ('b', 2), ('c', 3)] | as_dict
         {'a': 1, 'b': 2, 'c': 3}
 
     as_set
         Outputs an iterable as a set
         >>> [1, 2, 3, 1, 2, 3] | as_set
         {1, 2, 3}
+
+    as_items
+        Outputs an iterable of tuples of a dictioanary
+        >>> {'a': 1, 'b': 2, 'c': 3} | as_items | as_list
+        [('a', 1), ('b', 2), ('c', 3)]
 
     concat()
         Aggregates strings using given separator, or ", " by default
@@ -365,6 +370,18 @@ Or using decorators:
         >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
         [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
 
+    map_value
+        Maps function f to the values of a dictionary or the second items in a dict-like list of pairs
+        >>> {'a': 1, 'b': 2, 'c': 3} | map_value(lambda x: x+1) | as_list
+        [('a', 2), ('b', 3), ('c', 4)]
+
+    swap
+        Swap the keys and values of a dictionary. When the mapping is not one-to-one loss will occur.
+        >>> {'a': 1, 'b': 2, 'c': 3} | swap | as_dict
+        {1: 'a', 2: 'b'}
+
+    argmax, argmin
+        Return the key corresponding to the max/min value in the dict, using the key function if provided 
 
 # Euler project samples
 
