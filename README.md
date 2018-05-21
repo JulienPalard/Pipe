@@ -292,7 +292,7 @@ Or using decorators:
         Deduplicate values
 
         >>> [1,1,2,2,3,3,1,2,3] | dedup | as_list
-        [1, 2, 3,]
+        [1, 2, 3]
 
     uniq()
         Like dedup() but only deduplicate consecutive values.
