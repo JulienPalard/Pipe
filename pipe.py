@@ -8,6 +8,7 @@ import itertools
 import socket
 import sys
 from contextlib import closing
+from collections import deque
 
 try:
     import builtins
@@ -74,12 +75,7 @@ def take(iterable, qte):
 @Pipe
 def tail(iterable, qte):
     "Yield qte of elements in the given iterable."
-    out = []
-    for item in iterable:
-        out.append(item)
-        if len(out) > qte:
-            out.pop(0)
-    return out
+    return deque(iterable, maxlen=qte)
 
 
 @Pipe
