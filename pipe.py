@@ -19,8 +19,8 @@ except ImportError:
 __author__ = 'Julien Palard <julien@eeple.fr>'
 __credits__ = """Jerome Schneider, for his Python skillz,
 and dalexander for contributing"""
-__date__ = '10 Nov 2010'
-__version__ = '1.4.2'
+__date__ = '27 Jul 2018'
+__version__ = '1.5.0'
 __all__ = [
     'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count',
     'max', 'min', 'as_dict', 'as_set', 'permutations', 'netcat', 'netwrite',
