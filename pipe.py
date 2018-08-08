@@ -352,6 +352,16 @@ def transpose(iterable):
     return list(zip(*iterable))
 
 
+@Pipe
+def do(x, func):
+    """
+    Applies :func on :x but returns :x unchanged. Useful for debugging intermediate results in pipeline like:
+    range(5) | do(print) | add
+    """
+    func(x)
+    return x
+
+
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
 
