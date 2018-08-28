@@ -19,7 +19,7 @@ Given fib a generator of fibonacci numbers:
 
 # Vocabulary
 
-- A Pipe: a Pipe is a 'pipeable' function, somthing that you can pipe to,
+- A Pipe: a Pipe is a 'pipeable' function, something that you can pipe to,
   In the code '[1, 2, 3] | add' add is a Pipe
 - A Pipe function: A standard function returning a Pipe so it can be used like
   a normal Pipe but called like in : [1, 2, 3] | concat("#")
@@ -48,7 +48,7 @@ a specialized Pipe.
 
 # Constructing your own
 
-You can construct your pipes using Pipe classe initialized with lambdas like:
+You can construct your pipes using Pipe class initialized with lambdas like:
 
     stdout = Pipe(lambda x: sys.stdout.write(str(x)))
     select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
