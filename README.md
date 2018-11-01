@@ -289,16 +289,22 @@ Or using decorators:
         '1, -2, 3, -4, 5'
 
     dedup()
-        Deduplicate values
+        Deduplicate values, using the given key function if provided (or else
+        the identity)
 
         >>> [1,1,2,2,3,3,1,2,3] | dedup | as_list
         [1, 2, 3]
+        >>> [1,1,2,2,3,3,1,2,3] | dedup(key=lambda n:n % 2) | as_list
+        [1, 2]
 
     uniq()
-        Like dedup() but only deduplicate consecutive values.
+        Like dedup() but only deduplicate consecutive values, using the given
+        key function if provided (or else the identity)
 
         >>> [1,1,2,2,3,3,1,2,3] | uniq | as_list
         [1, 2, 3, 1, 2, 3]
+        >>> [1,1,2,2,3,3,1,2,3] | uniq(key=lambda n:n % 2) | as_list
+        [1, 2, 3, 2, 3]
 
     reverse
         Like Python's built-in "reversed" primitive.
