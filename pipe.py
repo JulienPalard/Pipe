@@ -17,7 +17,7 @@ except ImportError:
 
 
 __author__ = 'Julien Palard <julien@eeple.fr>'
-__credits__ = """Jerome Schneider, for its Python skillz,
+__credits__ = """Jerome Schneider, for his Python skillz,
 and dalexander for contributing"""
 __date__ = '10 Nov 2010'
 __version__ = '1.4.2'
