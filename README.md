@@ -371,6 +371,12 @@ Or using decorators:
         >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
         [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
 
+    into_iter()
+        Like 'select', but applies the conversion expression on the iterable
+        rather than on the items in it.
+        >>> [('a', 1), ('b', 2)] | as_dict | into_iter(lambda x: x.iteritems()) | select(lambda (k, v): v) | as_list
+        [1, 2]
+
 
 # Euler project samples
 

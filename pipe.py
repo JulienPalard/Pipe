@@ -29,7 +29,7 @@ __all__ = [
     'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
     'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
     'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose',
-    'dedup', 'uniq',
+    'dedup', 'uniq', 'into_iter',
 ]
 
 
@@ -60,6 +60,10 @@ class Pipe:
     def __call__(self, *args, **kwargs):
         return Pipe(lambda x: self.function(x, *args, **kwargs))
 
+
+@Pipe
+def into_iter(value, func):
+    return func(value)
 
 @Pipe
 def take(iterable, qte):
