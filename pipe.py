@@ -16,20 +16,60 @@ except ImportError:
     import __builtin__ as builtins
 
 
-__author__ = 'Julien Palard <julien@eeple.fr>'
+__author__ = "Julien Palard <julien@eeple.fr>"
 __credits__ = """Jerome Schneider, for his Python skillz,
 and dalexander for contributing"""
-__date__ = '27 Jul 2018'
-__version__ = '1.5.0'
+__date__ = "27 Jul 2018"
+__version__ = "1.5.0"
 __all__ = [
-    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count', 'map',
-    'max', 'min', 'as_dict', 'as_set', 'permutations', 'netcat', 'netwrite',
-    'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
-    'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
-    'skip_while', 'aggregate', 'groupby', 'sort', 'reverse',
-    'chain_with', 'islice', 'izip', 'passed', 'index', 'strip',
-    'lstrip', 'rstrip', 'run_with', 't', 'to_type', 'transpose',
-    'dedup', 'uniq',
+    "Pipe",
+    "take",
+    "tail",
+    "skip",
+    "all",
+    "any",
+    "average",
+    "count",
+    "map",
+    "max",
+    "min",
+    "as_dict",
+    "as_set",
+    "permutations",
+    "netcat",
+    "netwrite",
+    "traverse",
+    "concat",
+    "as_list",
+    "as_tuple",
+    "stdout",
+    "lineout",
+    "tee",
+    "add",
+    "first",
+    "chain",
+    "select",
+    "where",
+    "take_while",
+    "skip_while",
+    "aggregate",
+    "groupby",
+    "sort",
+    "reverse",
+    "chain_with",
+    "islice",
+    "izip",
+    "passed",
+    "index",
+    "strip",
+    "lstrip",
+    "rstrip",
+    "run_with",
+    "t",
+    "to_type",
+    "transpose",
+    "dedup",
+    "uniq",
 ]
 
 
@@ -50,6 +90,7 @@ class Pipe:
     print [1, 2, 3] | select(lambda x: x * 2)
     # 2, 4, 6
     """
+
     def __init__(self, function):
         self.function = function
         functools.update_wrapper(self, function)
@@ -87,8 +128,9 @@ def skip(iterable, qte):
         else:
             qte -= 1
 
+
 @Pipe
-def dedup(iterable, key=lambda x:x):
+def dedup(iterable, key=lambda x: x):
     """Only yield unique items. Use a set to keep track of duplicate data."""
     seen = set()
     for item in iterable:
@@ -97,8 +139,9 @@ def dedup(iterable, key=lambda x:x):
             seen.add(dupkey)
             yield item
 
+
 @Pipe
-def uniq(iterable, key=lambda x:x):
+def uniq(iterable, key=lambda x: x):
     """Deduplicate consecutive duplicate values."""
     iterator = iter(iterable)
     try:
@@ -112,6 +155,7 @@ def uniq(iterable, key=lambda x:x):
         if itemkey != prevkey:
             yield item
         prevkey = itemkey
+
 
 @Pipe
 def all(iterable, pred):
@@ -163,9 +207,11 @@ def min(iterable, **kwargs):
 def as_dict(iterable):
     return dict(iterable)
 
+
 @Pipe
 def as_set(iterable):
     return set(iterable)
+
 
 @Pipe
 def permutations(iterable, r=None):
@@ -243,8 +289,8 @@ def tee(iterable):
 
 
 @Pipe
-def write(iterable, fname, glue='\n'):
-    with open(fname, 'w') as f:
+def write(iterable, fname, glue="\n"):
+    with open(fname, "w") as f:
         for item in iterable:
             f.write(str(item) + glue)
 
@@ -289,8 +335,8 @@ def skip_while(iterable, predicate):
 
 @Pipe
 def aggregate(iterable, function, **kwargs):
-    if 'initializer' in kwargs:
-        return functools.reduce(function, iterable, kwargs['initializer'])
+    if "initializer" in kwargs:
+        return functools.reduce(function, iterable, kwargs["initializer"])
     return functools.reduce(function, iterable)
 
 
@@ -336,14 +382,18 @@ def lstrip(iterable, chars=None):
 
 @Pipe
 def run_with(iterable, func):
-    return (func(**iterable) if isinstance(iterable, dict) else
-            func(*iterable) if hasattr(iterable, '__iter__') else
-            func(iterable))
+    return (
+        func(**iterable)
+        if isinstance(iterable, dict)
+        else func(*iterable)
+        if hasattr(iterable, "__iter__")
+        else func(iterable)
+    )
 
 
 @Pipe
 def t(iterable, y):
-    if hasattr(iterable, '__iter__') and not isinstance(iterable, str):
+    if hasattr(iterable, "__iter__") and not isinstance(iterable, str):
         return iterable + type(iterable)([y])
     return [iterable, y]
 
@@ -369,4 +419,5 @@ else:
 
 if __name__ == "__main__":
     import doctest
-    doctest.testfile('README.md')
+
+    doctest.testfile("README.md")
