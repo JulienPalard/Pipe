@@ -22,7 +22,7 @@ and dalexander for contributing"""
 __date__ = '27 Jul 2018'
 __version__ = '1.5.0'
 __all__ = [
-    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count',
+    'Pipe', 'take', 'tail', 'skip', 'all', 'any', 'average', 'count', 'map',
     'max', 'min', 'as_dict', 'as_set', 'permutations', 'netcat', 'netwrite',
     'traverse', 'concat', 'as_list', 'as_tuple', 'stdout', 'lineout',
     'tee', 'add', 'first', 'chain', 'select', 'where', 'take_while',
@@ -212,7 +212,7 @@ def traverse(args):
 
 @Pipe
 def concat(iterable, separator=", "):
-    return separator.join(map(str, iterable))
+    return separator.join(builtins.map(str, iterable))
 
 
 @Pipe
@@ -266,7 +266,10 @@ def chain(iterable):
 
 @Pipe
 def select(iterable, selector):
-    return (selector(x) for x in iterable)
+    return builtins.map(selector, iterable)
+
+
+map = select
 
 
 @Pipe

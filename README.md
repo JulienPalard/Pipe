@@ -162,9 +162,14 @@ Or using decorators:
         >>> [[0, 1, 2], squares] | traverse | as_list
         [0, 1, 2, 0, 1, 4]
 
-    select()
+    map()
         Apply a conversion expression given as parameter
         to each element of the given iterable
+        >>> [1, 2, 3] | map(lambda x: x * x) | concat
+        '1, 4, 9'
+
+    select()
+        An alias for map().
         >>> [1, 2, 3] | select(lambda x: x * x) | concat
         '1, 4, 9'
 
