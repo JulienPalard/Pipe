@@ -306,11 +306,6 @@ def first(iterable):
 
 
 @Pipe
-def chain(iterable):
-    return itertools.chain(*iterable)
-
-
-@Pipe
 def select(iterable, selector):
     return builtins.map(selector, iterable)
 
@@ -408,6 +403,7 @@ def transpose(iterable):
     return list(zip(*iterable))
 
 
+chain = Pipe(itertools.chain.from_iterable)
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
 
