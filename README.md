@@ -377,6 +377,27 @@ Or using decorators:
         [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
 
 
+# Pitfalls in Python3
+
+These would not work but `TypeError` exceptions are thrown:
+
+     mydict = {'a':1, 'b':2}
+     mydict.keys() | as_list  # TypeError exception
+     mydict.items() | as_list  # TypeError exception
+
+This is because pipe is implemented using `__ror__` function and it will be
+invoked in the assumption that the left side of the pipe operator does not
+implement the `__or__` function or it can return `NotImplemented` upon Pipe
+objects. As of Python 3.7, the `keys()` and `items()` functions of dictionaries
+are the two known iterables that violates the above assumption.
+
+The work-around would be the following:
+
+     iter(mydict.keys()) | as_list  # OK
+     mydict | as_list  # OK, same as keys()
+     iter(mydict.items()) | as_list  # OK
+
+
 # Euler project samples
 
 > Find the sum of all the multiples of 3 or 5 below 1000.
