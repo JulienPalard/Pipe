@@ -17,6 +17,22 @@ Given fib a generator of Fibonacci numbers:
                     | add)
 
 
+# Deprecations of pipe 1.x
+
+In pipe 1.x a lot of functions were returning iterables and a lot
+other functions were returning non-iterables, causing confusion. The
+one returning non-iterables could only be used as the last function of
+a pipe expression, so they are in fact useless:
+
+    range(100) | where(lambda x: x % 2 == 0) | add
+
+can be rewritten with no less readability as:
+
+    sum(range(100) | where(lambda x: x % 2 == 0))
+
+so all pipes returning a non-pipe are now deprecated and will be removed in pipe 2.0.
+
+
 # Vocabulary
 
 - A Pipe: a Pipe is a 'pipeable' function, something that you can pipe to,
@@ -34,13 +50,16 @@ will be OK, so:
 
 The basic syntax is to use a Pipe like in a shell:
 
-    >>> [1, 2, 3] | add
+    >>> sum(range(100) | select(lambda x: x ** 2) | where(lambda x: x < 100))
+    285
+
+Some pipes take an argument, some do not need one:
+
+    >>> sum([1, 2, 3, 4] | where(lambda x: x % 2 == 0))
     6
 
-A Pipe can be a function call, for example the Pipe function 'where':
-
-    >>> [1, 2, 3] | where(lambda x: x % 2 == 0) #doctest: +ELLIPSIS
-    <generator object ...>
+    >>> sum([1, [2, 3], 4] | traverse)
+    10
 
 A Pipe as a function is nothing more than a function returning
 a specialized Pipe.
@@ -62,20 +81,10 @@ Or using decorators:
 
 # Existing Pipes in this module
 
-    stdout
-        Outputs anything to the standard output
-        >>> "42" | stdout
-        42
-
-    lineout
-        Outputs anything to the standard output followed by a line break
-        >>> 42 | lineout
-        42
-
     tee
         tee outputs to the standard output and yield unchanged items, usefull for
         debugging
-        >>> [1, 2, 3, 4, 5] | tee | add
+        >>> sum([1, 2, 3, 4, 5] | tee)
         1
         2
         3
@@ -83,197 +92,84 @@ Or using decorators:
         5
         15
 
-    as_list
-        Outputs an iterable as a list
-        >>> (0, 1, 2) | as_list
-        [0, 1, 2]
-
-    as_tuple
-        Outputs an iterable as a tuple
-        >>> [1, 2, 3] | as_tuple
-        (1, 2, 3)
-
-    as_dict
-        Outputs an iterable of tuples as a dictionary
-        [('a', 1), ('b', 2), ('c', 3)] | as_dict
-        {'a': 1, 'b': 2, 'c': 3}
-
-    as_set
-        Outputs an iterable as a set
-        >>> [1, 2, 3, 1, 2, 3] | as_set
-        {1, 2, 3}
-
-    concat()
-        Aggregates strings using given separator, or ", " by default
-        >>> [1, 2, 3, 4] | concat
-        '1, 2, 3, 4'
-        >>> [1, 2, 3, 4] | concat("#")
-        '1#2#3#4'
-
-    average
-        Returns the average of the given iterable
-        >>> [1, 2, 3, 4, 5, 6] | average
-        3.5
-
-    netcat
-        Open a socket on the given host and port, and send data to it,
-        Yields host reponse as it come.
-        netcat apply traverse to its input so it can take a string or
-        any iterable.
-
-        "GET / HTTP/1.0\r\nHost: google.fr\r\n\r\n" \
-            | netcat('google.fr', 80)               \
-            | concat                                \
-            | stdout
-
-    netwrite
-        Like netcat but don't read the socket after sending data
-
-    count
-        Returns the length of the given iterable, counting elements one by one
-        >>> [1, 2, 3, 4, 5, 6] | count
-        6
-
-    add
-        Returns the sum of all elements in the preceding iterable
-        >>> (1, 2, 3, 4, 5, 6) | add
-        21
-
-    first
-        Returns the first element of the given iterable
-        >>> (1, 2, 3, 4, 5, 6) | first
-        1
-
     chain
-        Unfold preceding Iterable of Iterables
-        >>> [[1, 2], [3, 4], [5]] | chain | concat
-        '1, 2, 3, 4, 5'
+        Chain a sequence of iterables:
+        >>> list([[1, 2], [3, 4], [5]] | chain)
+        [1, 2, 3, 4, 5]
 
-        Warning : chain only unfold iterable containing ONLY iterables :
+        Warning : chain only unfold iterable containing ONLY iterables:
           [1, 2, [3]] | chain
-              Gives a TypeError: chain argument #1 must support iteration
-              Consider using traverse
+        Gives a TypeError: chain argument #1 must support iteration
+        Consider using traverse.
 
     traverse
-        Recursively unfold iterables
-        >>> [[1, 2], [[[3], [[4]]], [5]]] | traverse | concat
-        '1, 2, 3, 4, 5'
+        Recursively unfold iterables:
+        >>> list([[1, 2], [[[3], [[4]]], [5]]] | traverse)
+        [1, 2, 3, 4, 5]
         >>> squares = (i * i for i in range(3))
-        >>> [[0, 1, 2], squares] | traverse | as_list
+        >>> list([[0, 1, 2], squares] | traverse)
         [0, 1, 2, 0, 1, 4]
 
     map()
         Apply a conversion expression given as parameter
         to each element of the given iterable
-        >>> [1, 2, 3] | map(lambda x: x * x) | concat
-        '1, 4, 9'
+        >>> list([1, 2, 3] | map(lambda x: x * x))
+        [1, 4, 9]
 
     select()
         An alias for map().
-        >>> [1, 2, 3] | select(lambda x: x * x) | concat
-        '1, 4, 9'
+        >>> list([1, 2, 3] | select(lambda x: x * x))
+        [1, 4, 9]
 
     where()
-        Only yields the matching items of the given iterable
-        >>> [1, 2, 3] | where(lambda x: x % 2 == 0) | concat
-        '2'
+        Only yields the matching items of the given iterable:
+        >>> list([1, 2, 3] | where(lambda x: x % 2 == 0))
+        [2]
 
     take_while()
         Like itertools.takewhile, yields elements of the
-        given iterable while the predicat is true
-        >>> [1, 2, 3, 4] | take_while(lambda x: x < 3) | concat
-        '1, 2'
+        given iterable while the predicat is true:
+        >>> list([1, 2, 3, 4] | take_while(lambda x: x < 3))
+        [1, 2]
 
     skip_while()
         Like itertools.dropwhile, skips elements of the given iterable
-        while the predicat is true, then yields others
-        >>> [1, 2, 3, 4] | skip_while(lambda x: x < 3) | concat
-        '3, 4'
+        while the predicat is true, then yields others:
+        >>> list([1, 2, 3, 4] | skip_while(lambda x: x < 3))
+        [3, 4]
 
     chain_with()
         Like itertools.chain, yields elements of the given iterable,
         then yields elements of its parameters
-        >>> (1, 2, 3) | chain_with([4, 5], [6]) | concat
-        '1, 2, 3, 4, 5, 6'
+        >>> list((1, 2, 3) | chain_with([4, 5], [6]))
+        [1, 2, 3, 4, 5, 6]
 
     take()
         Yields the given quantity of elemenets from the given iterable, like head
         in shell script.
-        >>> (1, 2, 3, 4, 5) | take(2) | concat
-        '1, 2'
+        >>> list((1, 2, 3, 4, 5) | take(2))
+        [1, 2]
 
     tail()
         Yiels the given quantity of the last elements of the given iterable.
-        >>> (1, 2, 3, 4, 5) | tail(3) | concat
-        '3, 4, 5'
+        >>> list((1, 2, 3, 4, 5) | tail(3))
+        [3, 4, 5]
 
     skip()
         Skips the given quantity of elements from the given iterable, then yields
-        >>> (1, 2, 3, 4, 5) | skip(2) | concat
-        '3, 4, 5'
+        >>> list((1, 2, 3, 4, 5) | skip(2))
+        [3, 4, 5]
 
     islice()
         Just the itertools.islice
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2) | concat
-        '3, 5, 7'
+        >>> list((1, 2, 3, 4, 5, 6, 7, 8, 9) | islice(2, 8, 2))
+        [3, 5, 7]
 
     izip()
         Just the itertools.izip
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-        ...  | izip([9, 8, 7, 6, 5, 4, 3, 2, 1]) \
-        ...  | concat
-        '(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)'
-
-    aggregate()
-        Works as python reduce, the optional initializer must be passed as a
-        keyword argument
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) | aggregate(lambda x, y: x * y)
-        362880
-
-        >>> () | aggregate(lambda x, y: x + y, initializer=0)
-        0
-
-        Simulate concat :
-        >>> (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-        ... | aggregate(lambda x, y: str(x) + ', ' + str(y))
-        '1, 2, 3, 4, 5, 6, 7, 8, 9'
-
-    any()
-        Returns True if any element of the given iterable satisfies the predicate
-        >>> (1, 3, 5, 6, 7) | any(lambda x: x >= 7)
-        True
-
-        >>> (1, 3, 5, 6, 7) | any(lambda x: x > 7)
-        False
-
-    all()
-        Returns True if all elements of the given iterable
-        satisfies the given predicate
-        >>> (1, 3, 5, 6, 7) | all(lambda x: x < 7)
-        False
-
-        >>> (1, 3, 5, 6, 7) | all(lambda x: x <= 7)
-        True
-
-    max()
-        Returns the biggest element, using the given key function if
-        provided (or else the identity)
-
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max(key=len)
-        'qwerty'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max()
-        'zoog'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | max
-        'zoog'
-
-    min()
-        Returns the smallest element, using the key function if provided
-        (or else the identity)
-
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min(key=len)
-        'b'
-        >>> ('aa', 'b', 'foo', 'qwerty', 'bar', 'zoog') | min
-        'aa'
+        >>> list((1, 2, 3, 4, 5, 6, 7, 8, 9)
+        ...  | izip([9, 8, 7, 6, 5, 4, 3, 2, 1]))
+        [(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)]
 
     groupby()
         Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
@@ -288,45 +184,33 @@ Or using decorators:
         only), key, and reverse arguments. By default sorts using the
         identity function as the key.
 
-        >>> "python" | sort | concat("")
+        >>> ''.join("python" | sort)
         'hnopty'
-        >>> [5, -4, 3, -2, 1] | sort(key=abs) | concat
-        '1, -2, 3, -4, 5'
+        >>> list([5, -4, 3, -2, 1] | sort(key=abs))
+        [1, -2, 3, -4, 5]
 
     dedup()
         Deduplicate values, using the given key function if provided (or else
         the identity)
 
-        >>> [1,1,2,2,3,3,1,2,3] | dedup | as_list
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup)
         [1, 2, 3]
-        >>> [1,1,2,2,3,3,1,2,3] | dedup(key=lambda n:n % 2) | as_list
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup(key=lambda n:n % 2))
         [1, 2]
 
     uniq()
         Like dedup() but only deduplicate consecutive values, using the given
         key function if provided (or else the identity)
 
-        >>> [1,1,2,2,3,3,1,2,3] | uniq | as_list
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | uniq)
         [1, 2, 3, 1, 2, 3]
-        >>> [1,1,2,2,3,3,1,2,3] | uniq(key=lambda n:n % 2) | as_list
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | uniq(key=lambda n:n % 2))
         [1, 2, 3, 2, 3]
 
     reverse
         Like Python's built-in "reversed" primitive.
-        >>> [1, 2, 3] | reverse | concat
-        '3, 2, 1'
-
-    passed
-        Like Python's pass.
-        >>> "something" | passed
-
-
-    index
-        Returns index of value in iterable
-        >>> [1,2,3,2,1] | index(2)
-        1
-        >>> [1,2,3,2,1] | index(1,1)
-        4
+        >>> list([1, 2, 3] | reverse)
+        [3, 2, 1]
 
     strip
         Like Python's strip-method for str.
@@ -349,27 +233,18 @@ Or using decorators:
         >>> '.,[abc] ] ' | lstrip('.,[] ')
         'abc] ] '
 
-    run_with
-        >>> (1,10,2) | run_with(range) | as_list
-        [1, 3, 5, 7, 9]
-
     t
         Like Haskell's operator ":"
-        >>> 0 | t(1) | t(2) == range(3) | as_list
+        >>> list(0 | t(1) | t(2)) == list(range(3))
         True
-
-    to_type
-        Typecast
-        >>> range(5) | add | to_type(str) | t(' is summ!') | concat('')
-        '10 is summ!'
 
     permutations()
         Returns all possible permutations
-        >>> 'ABC' | permutations(2) | concat(' ')
-        "('A', 'B') ('A', 'C') ('B', 'A') ('B', 'C') ('C', 'A') ('C', 'B')"
+        >>> list('ABC' | permutations(2))
+        [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
 
-        >>> range(3) | permutations | concat('-')
-        '(0, 1, 2)-(0, 2, 1)-(1, 0, 2)-(1, 2, 0)-(2, 0, 1)-(2, 1, 0)'
+        >>> list(range(3) | permutations)
+        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
 
     transpose()
         Transposes the rows and columns of a matrix

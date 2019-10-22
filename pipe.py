@@ -9,6 +9,7 @@ import socket
 import sys
 from contextlib import closing
 from collections import deque
+import warnings
 
 try:
     import builtins
@@ -161,6 +162,11 @@ def uniq(iterable, key=lambda x: x):
 def all(iterable, pred):
     """Returns True if ALL elements in the given iterable are true for the
     given pred function"""
+    warnings.warn(
+        "pipe.all is deprecated, use the builtin all(...) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return builtins.all(pred(x) for x in iterable)
 
 
@@ -168,6 +174,11 @@ def all(iterable, pred):
 def any(iterable, pred):
     """Returns True if ANY element in the given iterable is True for the
     given pred function"""
+    warnings.warn(
+        "pipe.any is deprecated, use the builtin any(...) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return builtins.any(pred(x) for x in iterable)
 
 
@@ -176,6 +187,11 @@ def average(iterable):
     """Build the average for the given iterable, starting with 0.0 as seed
     Will try a division by 0 if the iterable is empty...
     """
+    warnings.warn(
+        "pipe.average is deprecated, use statistics.mean instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     total = 0.0
     qte = 0
     for element in iterable:
@@ -187,6 +203,11 @@ def average(iterable):
 @Pipe
 def count(iterable):
     "Count the size of the given iterable, walking thrue it."
+    warnings.warn(
+        "pipe.count is deprecated, use the builtin len() instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     count = 0
     for element in iterable:
         count += 1
@@ -195,21 +216,41 @@ def count(iterable):
 
 @Pipe
 def max(iterable, **kwargs):
+    warnings.warn(
+        "pipe.max is deprecated, use the builtin max() instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return builtins.max(iterable, **kwargs)
 
 
 @Pipe
 def min(iterable, **kwargs):
+    warnings.warn(
+        "pipe.min is deprecated, use the builtin min() instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return builtins.min(iterable, **kwargs)
 
 
 @Pipe
 def as_dict(iterable):
+    warnings.warn(
+        "pipe.as_dict is deprecated, use dict(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return dict(iterable)
 
 
 @Pipe
 def as_set(iterable):
+    warnings.warn(
+        "pipe.as_set is deprecated, use set(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return set(iterable)
 
 
@@ -236,6 +277,7 @@ def netcat(to_send, host, port):
 
 @Pipe
 def netwrite(to_send, host, port):
+    warnings.warn("pipe.netwite is deprecated.", DeprecationWarning, stacklevel=4)
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
         for data in to_send | traverse:
@@ -258,26 +300,51 @@ def traverse(args):
 
 @Pipe
 def concat(iterable, separator=", "):
+    warnings.warn(
+        "pipe.concat is deprecated, use ', '.join(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return separator.join(builtins.map(str, iterable))
 
 
 @Pipe
 def as_list(iterable):
+    warnings.warn(
+        "pipe.as_list is deprecated, use list(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return list(iterable)
 
 
 @Pipe
 def as_tuple(iterable):
+    warnings.warn(
+        "pipe.as_tuple is deprecated, use tuple(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return tuple(iterable)
 
 
 @Pipe
 def stdout(x):
+    warnings.warn(
+        "pipe.stdout is deprecated, use print(your | pipe, end='') instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     sys.stdout.write(str(x))
 
 
 @Pipe
 def lineout(x):
+    warnings.warn(
+        "pipe.lineout is deprecated, use print(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     sys.stdout.write(str(x) + "\n")
 
 
@@ -290,6 +357,11 @@ def tee(iterable):
 
 @Pipe
 def write(iterable, fname, glue="\n"):
+    warnings.warn(
+        "pipe.write is deprecated, a context manager and the open builtin instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     with open(fname, "w") as f:
         for item in iterable:
             f.write(str(item) + glue)
@@ -297,11 +369,21 @@ def write(iterable, fname, glue="\n"):
 
 @Pipe
 def add(x):
+    warnings.warn(
+        "pipe.add is deprecated, use sum(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return sum(x)
 
 
 @Pipe
 def first(iterable):
+    warnings.warn(
+        "pipe.first is deprecated, use next(iter(your | pipe)) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return next(iter(iterable))
 
 
@@ -330,6 +412,12 @@ def skip_while(iterable, predicate):
 
 @Pipe
 def aggregate(iterable, function, **kwargs):
+    warnings.warn(
+        "pipe.aggregate is deprecated, use functols.reduce(function, your | pipe) "
+        "instead",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     if "initializer" in kwargs:
         return functools.reduce(function, iterable, kwargs["initializer"])
     return functools.reduce(function, iterable)
@@ -352,11 +440,17 @@ def reverse(iterable):
 
 @Pipe
 def passed(x):
+    warnings.warn("pipe.passed is deprecated.", DeprecationWarning, stacklevel=4)
     pass
 
 
 @Pipe
 def index(iterable, value, start=0, stop=None):
+    warnings.warn(
+        "pipe.index is deprecated, use (your | pipe)[n] instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return iterable.index(value, start, stop or len(iterable))
 
 
@@ -377,6 +471,11 @@ def lstrip(iterable, chars=None):
 
 @Pipe
 def run_with(iterable, func):
+    warnings.warn(
+        "pipe.run_with is deprecated, call the function with * or ** instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return (
         func(**iterable)
         if isinstance(iterable, dict)
@@ -395,6 +494,11 @@ def t(iterable, y):
 
 @Pipe
 def to_type(x, t):
+    warnings.warn(
+        "pipe.to_type is deprecated, use the_type(your | pipe) instead.",
+        DeprecationWarning,
+        stacklevel=4,
+    )
     return t(x)
 
 
