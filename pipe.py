@@ -21,7 +21,7 @@ __author__ = "Julien Palard <julien@eeple.fr>"
 __credits__ = """Jerome Schneider, for his Python skillz,
 and dalexander for contributing"""
 __date__ = "27 Jul 2018"
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 __all__ = [
     "Pipe",
     "take",
