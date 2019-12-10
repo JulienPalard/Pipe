@@ -256,18 +256,21 @@ Or using decorators:
 
 > Find the sum of all the multiples of 3 or 5 below 1000.
 
-    euler1 = (itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000) | add) \
-           + (itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000) | add) \
-           - (itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000) | add)
+    euler1 = (
+        sum(itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000))
+        + sum(itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000))
+        - sum(itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000))
+    )
     assert euler1 == 233168
 
 > Find the sum of all the even-valued terms in Fibonacci which do not exceed four million.
 
-    euler2 = fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000) | add
+    euler2 = sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
     assert euler2 == 4613732
 
 > Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
 
-    square = lambda x: x * x
-    euler6 = square(itertools.count(1) | take(100) | add) - (itertools.count(1) | take(100) | select(square) | add)
+    euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
+        itertools.count(1) | take(100) | select(lambda x: x ** 2)
+    )
     assert euler6 == 25164150
