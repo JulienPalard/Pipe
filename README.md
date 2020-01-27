@@ -12,9 +12,11 @@ As an example, here is the solution for the 2nd Euler Project exercise:
 
 Given fib a generator of Fibonacci numbers:
 
-    euler2 = (fib() | where(lambda x: x % 2 == 0)
-                    | take_while(lambda x: x < 4000000)
-                    | add)
+```python
+euler2 = (fib() | where(lambda x: x % 2 == 0)
+                | take_while(lambda x: x < 4000000)
+                | add)
+```
 
 
 # Deprecations of pipe 1.x
@@ -24,11 +26,15 @@ other functions were returning non-iterables, causing confusion. The
 one returning non-iterables could only be used as the last function of
 a pipe expression, so they are in fact useless:
 
-    range(100) | where(lambda x: x % 2 == 0) | add
+```python
+range(100) | where(lambda x: x % 2 == 0) | add
+```
 
 can be rewritten with no less readability as:
 
-    sum(range(100) | where(lambda x: x % 2 == 0))
+```python
+sum(range(100) | where(lambda x: x % 2 == 0))
+```
 
 so all pipes returning a non-pipe are now deprecated and will be removed in pipe 2.0.
 
@@ -46,20 +52,26 @@ so all pipes returning a non-pipe are now deprecated and will be removed in pipe
 I don't like `import * `but for the following examples in an REPL it
 will be OK, so:
 
-    >>> from pipe import *
+```python
+>>> from pipe import *
+```
 
 The basic syntax is to use a Pipe like in a shell:
 
-    >>> sum(range(100) | select(lambda x: x ** 2) | where(lambda x: x < 100))
-    285
+```python
+>>> sum(range(100) | select(lambda x: x ** 2) | where(lambda x: x < 100))
+285
+```
 
 Some pipes take an argument, some do not need one:
 
-    >>> sum([1, 2, 3, 4] | where(lambda x: x % 2 == 0))
-    6
+```python
+>>> sum([1, 2, 3, 4] | where(lambda x: x % 2 == 0))
+6
 
-    >>> sum([1, [2, 3], 4] | traverse)
-    10
+>>> sum([1, [2, 3], 4] | traverse)
+10
+```
 
 A Pipe as a function is nothing more than a function returning
 a specialized Pipe.
@@ -69,14 +81,18 @@ a specialized Pipe.
 
 You can construct your pipes using Pipe class initialized with lambdas like:
 
-    stdout = Pipe(lambda x: sys.stdout.write(str(x)))
-    select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
+```python
+stdout = Pipe(lambda x: sys.stdout.write(str(x)))
+select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
+```
 
 Or using decorators:
 
-    @Pipe
-    def stdout(x):
-        sys.stdout.write(str(x))
+```python
+@Pipe
+def stdout(x):
+    sys.stdout.write(str(x))
+```
 
 
 # Existing Pipes in this module
@@ -256,21 +272,27 @@ Or using decorators:
 
 > Find the sum of all the multiples of 3 or 5 below 1000.
 
-    euler1 = (
-        sum(itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000))
-        + sum(itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000))
-        - sum(itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000))
-    )
-    assert euler1 == 233168
+```python
+euler1 = (
+    sum(itertools.count() | select(lambda x: x * 3) | take_while(lambda x: x < 1000))
+    + sum(itertools.count() | select(lambda x: x * 5) | take_while(lambda x: x < 1000))
+    - sum(itertools.count() | select(lambda x: x * 15) | take_while(lambda x: x < 1000))
+)
+assert euler1 == 233168
+```
 
 > Find the sum of all the even-valued terms in Fibonacci which do not exceed four million.
 
-    euler2 = sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
-    assert euler2 == 4613732
+```python
+euler2 = sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
+assert euler2 == 4613732
+```
 
 > Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
 
-    euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
-        itertools.count(1) | take(100) | select(lambda x: x ** 2)
-    )
-    assert euler6 == 25164150
+```python
+euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
+    itertools.count(1) | take(100) | select(lambda x: x ** 2)
+)
+assert euler6 == 25164150
+```
