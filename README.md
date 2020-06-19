@@ -179,6 +179,11 @@ Or using decorators:
                 | concat(' / ')
         'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
 
+    path()
+        Retrieve the value at a given path.
+        >>> {'addr': {'country': 'Brazil'}} | path(['addr', 'country'])
+        'Brazil'
+
     sort()
         Like Python's built-in "sorted" primitive. Allows cmp (Python 2.x
         only), key, and reverse arguments. By default sorts using the

@@ -32,6 +32,7 @@ __all__ = [
     "average",
     "count",
     "map",
+    "path",
     "max",
     "min",
     "as_dict",
@@ -393,6 +394,17 @@ def select(iterable, selector):
 
 
 map = select
+
+
+@Pipe
+def path(obj, steps, default=None):
+    value = obj.get(steps[0], default) if isinstance(obj, dict) else default
+    steps = steps[1:]
+
+    if not steps:
+        return value
+
+    return value | path(steps, default)
 
 
 @Pipe
