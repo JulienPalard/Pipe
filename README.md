@@ -36,7 +36,8 @@ can be rewritten with no less readability as:
 sum(range(100) | where(lambda x: x % 2 == 0))
 ```
 
-so all pipes returning a non-pipe are now deprecated and will be removed in pipe 2.0.
+so all pipes returning non-iterables are now deprecated and will be
+removed in pipe 2.0.
 
 
 # Vocabulary
