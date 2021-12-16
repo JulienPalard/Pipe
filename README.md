@@ -194,10 +194,10 @@ def stdout(x):
     groupby()
         Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
         (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-                | groupby(lambda x: x % 2 and "Even" or "Odd")
+                | groupby(lambda x: "Odd" if i % 2 else "Even")
                 | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', '))))
                 | concat(' / ')
-        'Even : 1, 3, 5, 7, 9 / Odd : 2, 4, 6, 8'
+        'Odd : 1, 3, 5, 7, 9 / Even : 2, 4, 6, 8'
 
     sort()
         Like Python's built-in "sorted" primitive. Allows cmp (Python 2.x
