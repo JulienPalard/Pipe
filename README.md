@@ -24,10 +24,10 @@ To install the library, you can just run the following command:
 
 ```shell
 # Linux/macOS
-python3 -m pip install -U pipe
+python3 -m pip install pipe
 
 # Windows
-py -3 -m pip install -U pipe
+py -3 -m pip install pipe
 ```
 
 To install the development version, do the following:
@@ -35,7 +35,7 @@ To install the development version, do the following:
 ```shell
 $ git clone https://github.com/JulienPalard/Pipe
 $ cd Pipe
-$ python3 -m pip install -U .
+$ python3 -m pip install .
 ```
 
 # Deprecations of pipe 1.x
