@@ -18,6 +18,25 @@ euler2 = (fib() | where(lambda x: x % 2 == 0)
                 | add)
 ```
 
+# Installing
+
+To install the library, you can just run the following command:
+
+```shell
+# Linux/macOS
+python3 -m pip install pipe
+
+# Windows
+py -3 -m pip install pipe
+```
+
+To install the development version, do the following:
+
+```shell
+$ git clone https://github.com/JulienPalard/Pipe
+$ cd Pipe
+$ python3 -m pip install .
+```
 
 # Deprecations of pipe 1.x
 
