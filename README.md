@@ -320,10 +320,10 @@ euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
 assert euler6 == 25164150
 ```
 
-# Laxy evaluation
+# Lazy evaluation
 
 Using this module, you get lazy evaluation at two levels:
-- the object obtained by piping is a generator and will be evaluated only if needed
+- the object obtained by piping is a generator and will be evaluated only if needed,
 - within a series of pipe commands, only the elements that are actually needed will be evaluated.
 
 To illustrate:
@@ -388,16 +388,6 @@ ic(list(res_with_list))
 """
 This prints:
 
------ test using a range() as input -----
-*** what is the resulting object ***
-res_with_range: <generator object take at 0x7fa1933a6d60>
-*** what happens when we force evaluation ***
-processing at value 0
-processing at value 1
-processing at value 2
-processing at value 3
-processing at value 4
-list(res_with_range): [0, 2]
 ----- test using a list as input -----
 type(list_to_100): <class 'list'>
 len(list_to_100): 100
