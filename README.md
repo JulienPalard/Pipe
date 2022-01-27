@@ -319,3 +319,96 @@ euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
 )
 assert euler6 == 25164150
 ```
+
+# Laxy evaluation
+
+Using this module, you get lazy evaluation at two levels:
+- the object obtained by piping is a generator and will be evaluated only if needed
+- within a series of pipe commands, only the elements that are actually needed will be evaluated.
+
+To illustrate:
+
+```python
+from pipe import *
+
+from icecream import ic
+
+ic.configureOutput(prefix="", outputFunction=print)
+
+
+def dummy_func(x):
+    print(f"processing at value {x}")
+    return x
+
+
+print("----- test using a range() as input -----")
+
+
+res_with_range = (range(100) | select(dummy_func)
+                             | where(lambda x: x % 2 == 0)
+                             | take(2))
+
+print("*** what is the resulting object ***")
+ic(res_with_range)
+
+print("*** what happens when we force evaluation ***")
+ic(list(res_with_range))
+
+"""
+This prints:
+
+----- test using a range() as input -----
+*** what is the resulting object ***
+res_with_range: <generator object take at 0x7f60bd506d60>
+*** what happens when we force evaluation ***
+processing at value 0
+processing at value 1
+processing at value 2
+processing at value 3
+processing at value 4
+list(res_with_range): [0, 2]
+"""
+
+print("----- test using a list as input -----")
+
+list_to_100 = list(range(100))
+ic(type(list_to_100))
+ic(len(list_to_100))
+
+res_with_list = (list_to_100 | select(dummy_func)
+                             | where(lambda x: x % 2 == 0)
+                             | take(2))
+
+print("*** what is the resulting object ***")
+ic(res_with_list)
+
+print("*** what happens when we force evaluation ***")
+ic(list(res_with_list))
+
+"""
+This prints:
+
+----- test using a range() as input -----
+*** what is the resulting object ***
+res_with_range: <generator object take at 0x7fa1933a6d60>
+*** what happens when we force evaluation ***
+processing at value 0
+processing at value 1
+processing at value 2
+processing at value 3
+processing at value 4
+list(res_with_range): [0, 2]
+----- test using a list as input -----
+type(list_to_100): <class 'list'>
+len(list_to_100): 100
+*** what is the resulting object ***
+res_with_list: <generator object take at 0x7fa193308cf0>
+*** what happens when we force evaluation ***
+processing at value 0
+processing at value 1
+processing at value 2
+processing at value 3
+processing at value 4
+list(res_with_list): [0, 2]
+"""
+```
