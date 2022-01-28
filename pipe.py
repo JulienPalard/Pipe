@@ -71,7 +71,7 @@ __all__ = [
     "transpose",
     "dedup",
     "uniq",
-    "filter"
+    "filter",
 ]
 
 
