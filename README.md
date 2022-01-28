@@ -329,11 +329,8 @@ Using this module, you get lazy evaluation at two levels:
 To illustrate:
 
 ```python
-from pipe import *
-
-from icecream import ic
-
-ic.configureOutput(prefix="", outputFunction=print)
+from itertools import count
+from pipe import select, where, take
 
 
 def dummy_func(x):
@@ -341,64 +338,53 @@ def dummy_func(x):
     return x
 
 
-print("----- test using a range() as input -----")
+print("----- test using a generator as input -----")
 
+print(f"we are feeding in a: {type(count(100))}")
 
-res_with_range = (range(100) | select(dummy_func)
+res_with_count = (count(100) | select(dummy_func)
                              | where(lambda x: x % 2 == 0)
                              | take(2))
 
-print("*** what is the resulting object ***")
-ic(res_with_range)
-
-print("*** what happens when we force evaluation ***")
-ic(list(res_with_range))
-
-"""
-This prints:
-
------ test using a range() as input -----
-*** what is the resulting object ***
-res_with_range: <generator object take at 0x7f60bd506d60>
-*** what happens when we force evaluation ***
-processing at value 0
-processing at value 1
-processing at value 2
-processing at value 3
-processing at value 4
-list(res_with_range): [0, 2]
-"""
+print(f"the resulting object is: {res_with_count}")
+print(f"when we force evaluation we get:")
+print(f"{list(res_with_count)}")
 
 print("----- test using a list as input -----")
 
 list_to_100 = list(range(100))
-ic(type(list_to_100))
-ic(len(list_to_100))
+print(f"we are feeding in a: {type(list_to_100)} which has length {len(list_to_100)}")
 
 res_with_list = (list_to_100 | select(dummy_func)
                              | where(lambda x: x % 2 == 0)
                              | take(2))
 
-print("*** what is the resulting object ***")
-ic(res_with_list)
+print(f"the resulting object is: {res_with_list}")
+print(f"when we force evaluation we get:")
+print(f"{list(res_with_list)}")
+```
 
-print("*** what happens when we force evaluation ***")
-ic(list(res_with_list))
+Which prints:
 
-"""
-This prints:
-
+```
+----- test using a generator as input -----
+we are feeding in a: <class 'itertools.count'>
+the resulting object is: <generator object take at 0x7fefb5e70c10>
+when we force evaluation we get:
+processing at value 100
+processing at value 101
+processing at value 102
+processing at value 103
+processing at value 104
+[100, 102]
 ----- test using a list as input -----
-type(list_to_100): <class 'list'>
-len(list_to_100): 100
-*** what is the resulting object ***
-res_with_list: <generator object take at 0x7fa193308cf0>
-*** what happens when we force evaluation ***
+we are feeding in a: <class 'list'> which has length 100
+the resulting object is: <generator object take at 0x7fefb5e70dd0>
+when we force evaluation we get:
 processing at value 0
 processing at value 1
 processing at value 2
 processing at value 3
 processing at value 4
-list(res_with_list): [0, 2]
-"""
+[0, 2]
 ```
