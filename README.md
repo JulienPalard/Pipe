@@ -147,6 +147,9 @@ Alphabetical list of available pipes; when several names are listed for a given 
         >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup(key=lambda n:n % 2))
         [1, 2]
 
+    filter()
+        alias for where(), see where()
+
     groupby()
         Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
         (1, 2, 3, 4, 5, 6, 7, 8, 9) \
@@ -198,6 +201,9 @@ Alphabetical list of available pipes; when several names are listed for a given 
         '  abc'
         >>> '.,[abc] ] ' | rstrip('.,[] ')
         '.,[abc'
+
+    select()
+        alias for map(), see map()
 
     skip()
         Skips the given quantity of elements from the given iterable, then yields
@@ -282,7 +288,7 @@ Alphabetical list of available pipes; when several names are listed for a given 
         >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | uniq(key=lambda n:n % 2))
         [1, 2, 3, 2, 3]
 
-    where()
+    where(), filter()
         Only yields the matching items of the given iterable:
         >>> list([1, 2, 3] | where(lambda x: x % 2 == 0))
         [2]
