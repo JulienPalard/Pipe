@@ -120,16 +120,7 @@ def stdout(x):
 
 # Existing Pipes in this module
 
-    tee
-        tee outputs to the standard output and yield unchanged items, usefull for
-        debugging
-        >>> sum([1, 2, 3, 4, 5] | tee)
-        1
-        2
-        3
-        4
-        5
-        15
+Alphabetical list of available pipes; when several names are listed for a given pipe, these are aliases.
 
     chain
         Chain a sequence of iterables:
@@ -141,63 +132,28 @@ def stdout(x):
         Gives a TypeError: chain argument #1 must support iteration
         Consider using traverse.
 
-    traverse
-        Recursively unfold iterables:
-        >>> list([[1, 2], [[[3], [[4]]], [5]]] | traverse)
-        [1, 2, 3, 4, 5]
-        >>> squares = (i * i for i in range(3))
-        >>> list([[0, 1, 2], squares] | traverse)
-        [0, 1, 2, 0, 1, 4]
-
-    map()
-        Apply a conversion expression given as parameter
-        to each element of the given iterable
-        >>> list([1, 2, 3] | map(lambda x: x * x))
-        [1, 4, 9]
-
-    select()
-        An alias for map().
-        >>> list([1, 2, 3] | select(lambda x: x * x))
-        [1, 4, 9]
-
-    where()
-        Only yields the matching items of the given iterable:
-        >>> list([1, 2, 3] | where(lambda x: x % 2 == 0))
-        [2]
-
-    take_while()
-        Like itertools.takewhile, yields elements of the
-        given iterable while the predicat is true:
-        >>> list([1, 2, 3, 4] | take_while(lambda x: x < 3))
-        [1, 2]
-
-    skip_while()
-        Like itertools.dropwhile, skips elements of the given iterable
-        while the predicat is true, then yields others:
-        >>> list([1, 2, 3, 4] | skip_while(lambda x: x < 3))
-        [3, 4]
-
     chain_with()
         Like itertools.chain, yields elements of the given iterable,
         then yields elements of its parameters
         >>> list((1, 2, 3) | chain_with([4, 5], [6]))
         [1, 2, 3, 4, 5, 6]
 
-    take()
-        Yields the given quantity of elemenets from the given iterable, like head
-        in shell script.
-        >>> list((1, 2, 3, 4, 5) | take(2))
+    dedup()
+        Deduplicate values, using the given key function if provided (or else
+        the identity)
+
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup)
+        [1, 2, 3]
+        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup(key=lambda n:n % 2))
         [1, 2]
 
-    tail()
-        Yiels the given quantity of the last elements of the given iterable.
-        >>> list((1, 2, 3, 4, 5) | tail(3))
-        [3, 4, 5]
-
-    skip()
-        Skips the given quantity of elements from the given iterable, then yields
-        >>> list((1, 2, 3, 4, 5) | skip(2))
-        [3, 4, 5]
+    groupby()
+        Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
+        (1, 2, 3, 4, 5, 6, 7, 8, 9) \
+                | groupby(lambda x: "Odd" if i % 2 else "Even")
+                | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', '))))
+                | concat(' / ')
+        'Odd : 1, 3, 5, 7, 9 / Even : 2, 4, 6, 8'
 
     islice()
         Just the itertools.islice
@@ -210,13 +166,49 @@ def stdout(x):
         ...  | izip([9, 8, 7, 6, 5, 4, 3, 2, 1]))
         [(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)]
 
-    groupby()
-        Like itertools.groupby(sorted(iterable, key = keyfunc), keyfunc)
-        (1, 2, 3, 4, 5, 6, 7, 8, 9) \
-                | groupby(lambda x: "Odd" if i % 2 else "Even")
-                | select(lambda x: "%s : %s" % (x[0], (x[1] | concat(', '))))
-                | concat(' / ')
-        'Odd : 1, 3, 5, 7, 9 / Even : 2, 4, 6, 8'
+    lstrip
+        Like Python's lstrip-method for str.
+        >>> 'abc   ' | lstrip
+        'abc   '
+        >>> '.,[abc] ] ' | lstrip('.,[] ')
+        'abc] ] '
+
+    map(), select()
+        Apply a conversion expression given as parameter
+        to each element of the given iterable
+        >>> list([1, 2, 3] | map(lambda x: x * x))
+        [1, 4, 9]
+
+    permutations()
+        Returns all possible permutations
+        >>> list('ABC' | permutations(2))
+        [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+
+        >>> list(range(3) | permutations)
+        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
+
+    reverse
+        Like Python's built-in "reversed" primitive.
+        >>> list([1, 2, 3] | reverse)
+        [3, 2, 1]
+
+    rstrip
+        Like Python's rstrip-method for str.
+        >>> '  abc   ' | rstrip
+        '  abc'
+        >>> '.,[abc] ] ' | rstrip('.,[] ')
+        '.,[abc'
+
+    skip()
+        Skips the given quantity of elements from the given iterable, then yields
+        >>> list((1, 2, 3, 4, 5) | skip(2))
+        [3, 4, 5]
+
+    skip_while()
+        Like itertools.dropwhile, skips elements of the given iterable
+        while the predicate is true, then yields others:
+        >>> list([1, 2, 3, 4] | skip_while(lambda x: x < 3))
+        [3, 4]
 
     sort()
         Like Python's built-in "sorted" primitive. Allows cmp (Python 2.x
@@ -228,14 +220,58 @@ def stdout(x):
         >>> list([5, -4, 3, -2, 1] | sort(key=abs))
         [1, -2, 3, -4, 5]
 
-    dedup()
-        Deduplicate values, using the given key function if provided (or else
-        the identity)
+    strip
+        Like Python's strip-method for str.
+        >>> '  abc   ' | strip
+        'abc'
+        >>> '.,[abc] ] ' | strip('.,[] ')
+        'abc'
 
-        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup)
-        [1, 2, 3]
-        >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | dedup(key=lambda n:n % 2))
+    t
+        Like Haskell's operator ":"
+        >>> list(0 | t(1) | t(2)) == list(range(3))
+        True
+
+    tail()
+        Yields the given quantity of the last elements of the given iterable.
+        >>> list((1, 2, 3, 4, 5) | tail(3))
+        [3, 4, 5]
+
+    take()
+        Yields the given quantity of elements from the given iterable, like head
+        in shell script.
+        >>> list((1, 2, 3, 4, 5) | take(2))
         [1, 2]
+
+    take_while()
+        Like itertools.takewhile, yields elements of the
+        given iterable while the predicate is true:
+        >>> list([1, 2, 3, 4] | take_while(lambda x: x < 3))
+        [1, 2]
+
+    tee
+        tee outputs to the standard output and yield unchanged items, useful for
+        debugging
+        >>> sum([1, 2, 3, 4, 5] | tee)
+        1
+        2
+        3
+        4
+        5
+        15
+
+    transpose()
+        Transposes the rows and columns of a matrix
+        >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
+        [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+
+    traverse
+        Recursively unfold iterables:
+        >>> list([[1, 2], [[[3], [[4]]], [5]]] | traverse)
+        [1, 2, 3, 4, 5]
+        >>> squares = (i * i for i in range(3))
+        >>> list([[0, 1, 2], squares] | traverse)
+        [0, 1, 2, 0, 1, 4]
 
     uniq()
         Like dedup() but only deduplicate consecutive values, using the given
@@ -246,49 +282,10 @@ def stdout(x):
         >>> list([1, 1, 2, 2, 3, 3, 1, 2, 3] | uniq(key=lambda n:n % 2))
         [1, 2, 3, 2, 3]
 
-    reverse
-        Like Python's built-in "reversed" primitive.
-        >>> list([1, 2, 3] | reverse)
-        [3, 2, 1]
-
-    strip
-        Like Python's strip-method for str.
-        >>> '  abc   ' | strip
-        'abc'
-        >>> '.,[abc] ] ' | strip('.,[] ')
-        'abc'
-
-    rstrip
-        Like Python's rstrip-method for str.
-        >>> '  abc   ' | rstrip
-        '  abc'
-        >>> '.,[abc] ] ' | rstrip('.,[] ')
-        '.,[abc'
-
-    lstrip
-        Like Python's lstrip-method for str.
-        >>> 'abc   ' | lstrip
-        'abc   '
-        >>> '.,[abc] ] ' | lstrip('.,[] ')
-        'abc] ] '
-
-    t
-        Like Haskell's operator ":"
-        >>> list(0 | t(1) | t(2)) == list(range(3))
-        True
-
-    permutations()
-        Returns all possible permutations
-        >>> list('ABC' | permutations(2))
-        [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
-
-        >>> list(range(3) | permutations)
-        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
-
-    transpose()
-        Transposes the rows and columns of a matrix
-        >>> [[1, 2, 3], [4, 5, 6], [7, 8, 9]] | transpose
-        [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+    where()
+        Only yields the matching items of the given iterable:
+        >>> list([1, 2, 3] | where(lambda x: x % 2 == 0))
+        [2]
 
 
 # Euler project samples
@@ -318,4 +315,73 @@ euler6 = sum(itertools.count(1) | take(100)) ** 2 - sum(
     itertools.count(1) | take(100) | select(lambda x: x ** 2)
 )
 assert euler6 == 25164150
+```
+
+# Lazy evaluation
+
+Using this module, you get lazy evaluation at two levels:
+- the object obtained by piping is a generator and will be evaluated only if needed,
+- within a series of pipe commands, only the elements that are actually needed will be evaluated.
+
+To illustrate:
+
+```python
+from itertools import count
+from pipe import select, where, take
+
+
+def dummy_func(x):
+    print(f"processing at value {x}")
+    return x
+
+
+print("----- test using a generator as input -----")
+
+print(f"we are feeding in a: {type(count(100))}")
+
+res_with_count = (count(100) | select(dummy_func)
+                             | where(lambda x: x % 2 == 0)
+                             | take(2))
+
+print(f"the resulting object is: {res_with_count}")
+print(f"when we force evaluation we get:")
+print(f"{list(res_with_count)}")
+
+print("----- test using a list as input -----")
+
+list_to_100 = list(range(100))
+print(f"we are feeding in a: {type(list_to_100)} which has length {len(list_to_100)}")
+
+res_with_list = (list_to_100 | select(dummy_func)
+                             | where(lambda x: x % 2 == 0)
+                             | take(2))
+
+print(f"the resulting object is: {res_with_list}")
+print(f"when we force evaluation we get:")
+print(f"{list(res_with_list)}")
+```
+
+Which prints:
+
+```
+----- test using a generator as input -----
+we are feeding in a: <class 'itertools.count'>
+the resulting object is: <generator object take at 0x7fefb5e70c10>
+when we force evaluation we get:
+processing at value 100
+processing at value 101
+processing at value 102
+processing at value 103
+processing at value 104
+[100, 102]
+----- test using a list as input -----
+we are feeding in a: <class 'list'> which has length 100
+the resulting object is: <generator object take at 0x7fefb5e70dd0>
+when we force evaluation we get:
+processing at value 0
+processing at value 1
+processing at value 2
+processing at value 3
+processing at value 4
+[0, 2]
 ```
