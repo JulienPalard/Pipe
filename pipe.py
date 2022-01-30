@@ -71,6 +71,7 @@ __all__ = [
     "transpose",
     "dedup",
     "uniq",
+    "filter",
 ]
 
 
@@ -398,6 +399,9 @@ map = select
 @Pipe
 def where(iterable, predicate):
     return (x for x in iterable if (predicate(x)))
+
+
+filter = where
 
 
 @Pipe
