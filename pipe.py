@@ -11,10 +11,7 @@ from contextlib import closing
 from collections import deque
 import warnings
 
-try:
-    import builtins
-except ImportError:
-    import __builtin__ as builtins
+import builtins
 
 
 __author__ = "Julien Palard <julien@eeple.fr>"
@@ -514,12 +511,7 @@ def transpose(iterable):
 chain = Pipe(itertools.chain.from_iterable)
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
-
-# Python 2 & 3 compatibility
-if "izip" in dir(itertools):
-    izip = Pipe(itertools.izip)
-else:
-    izip = Pipe(zip)
+izip = Pipe(zip)
 
 if __name__ == "__main__":
     import doctest
