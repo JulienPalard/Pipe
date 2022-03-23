@@ -206,10 +206,10 @@ def count(iterable):
         DeprecationWarning,
         stacklevel=4,
     )
-    count = 0
-    for element in iterable:
-        count += 1
-    return count
+    total = 0
+    for _element in iterable:
+        total += 1
+    return total
 
 
 @Pipe
@@ -354,13 +354,13 @@ def tee(iterable):
 
 
 @Pipe
-def write(iterable, fname, glue="\n"):
+def write(iterable, fname, glue="\n", encoding="UTF-8"):
     warnings.warn(
         "pipe.write is deprecated, a context manager and the open builtin instead.",
         DeprecationWarning,
         stacklevel=4,
     )
-    with open(fname, "w") as f:
+    with open(fname, "w", encoding=encoding) as f:
         for item in iterable:
             f.write(str(item) + glue)
 
@@ -395,7 +395,7 @@ map = select
 
 @Pipe
 def where(iterable, predicate):
-    return (x for x in iterable if (predicate(x)))
+    return (x for x in iterable if predicate(x))
 
 
 filter = where
@@ -430,8 +430,8 @@ def groupby(iterable, keyfunc):
 
 
 @Pipe
-def sort(iterable, **kwargs):
-    return sorted(iterable, **kwargs)
+def sort(iterable, key=None, reverse=False):  # pylint: disable=redefined-outer-name
+    return sorted(iterable, key=key, reverse=reverse)
 
 
 @Pipe
@@ -440,9 +440,8 @@ def reverse(iterable):
 
 
 @Pipe
-def passed(x):
+def passed(_iterable):
     warnings.warn("pipe.passed is deprecated.", DeprecationWarning, stacklevel=4)
-    pass
 
 
 @Pipe
@@ -494,13 +493,13 @@ def t(iterable, y):
 
 
 @Pipe
-def to_type(x, t):
+def to_type(x, ctor):
     warnings.warn(
         "pipe.to_type is deprecated, use the_type(your | pipe) instead.",
         DeprecationWarning,
         stacklevel=4,
     )
-    return t(x)
+    return ctor(x)
 
 
 @Pipe
