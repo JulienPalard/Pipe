@@ -294,6 +294,30 @@ Alphabetical list of available pipes; when several names are listed for a given 
         [2]
 
 
+## The netcat pipe
+
+The netcat pipe sends and receive bytes over TCP:
+
+```python
+data = [
+    b"HEAD / HTTP/1.0\r\n",
+    b"Host: python.org\r\n",
+    b"\r\n",
+]
+for packet in data | netcat("python.org", 80):
+    print(packet.decode("UTF-8"))
+```
+
+Gives:
+
+```
+HTTP/1.1 301 Moved Permanently
+Content-length: 0
+Location: https://python.org/
+Connection: close
+```
+
+
 # Euler project samples
 
 > Find the sum of all the multiples of 3 or 5 below 1000.

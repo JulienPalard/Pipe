@@ -262,6 +262,7 @@ def permutations(iterable, r=None):
 
 @Pipe
 def netcat(to_send, host, port):
+    """Send and receive bytes over TCP."""
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
         for data in to_send | traverse:
@@ -284,13 +285,12 @@ def netwrite(to_send, host, port):
 
 @Pipe
 def traverse(args):
+    if isinstance(args, (str, bytes)):
+        yield args
+        return
     for arg in args:
         try:
-            if isinstance(arg, str):
-                yield arg
-            else:
-                for i in arg | traverse:
-                    yield i
+            yield from arg | traverse
         except TypeError:
             # not iterable --- output leaf
             yield arg
