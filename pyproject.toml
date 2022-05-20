@@ -1,3 +1,35 @@
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pipe"
+description = "Module enablig a sh like infix syntax (using pipes)"
+readme = "README.md"
+license = {text = "MIT License"}
+dynamic = ["version"]
+authors = [
+    {name = "Julien Palard", email = "julien@palard.fr"},
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+repository = "https://github.com/JulienPalard/Pipe"
+
+[tools.setuptools]
+py-modules = [
+    "pipe",
+]
+include-package-data = false
+
+[tool.setuptools.dynamic.version]
+attr = "pipe.__version__"
