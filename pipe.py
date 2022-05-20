@@ -19,33 +19,30 @@ __date__ = "27 Jul 2018"
 __version__ = "1.6.0"
 __all__ = [
     "Pipe",
-    "take",
-    "tail",
-    "skip",
-    "map",
-    "permutations",
-    "netcat",
-    "traverse",
-    "tee",
     "chain",
-    "select",
-    "where",
-    "take_while",
-    "skip_while",
-    "groupby",
-    "sort",
-    "reverse",
     "chain_with",
+    "dedup",
+    "filter",
+    "groupby",
     "islice",
     "izip",
-    "strip",
-    "lstrip",
-    "rstrip",
+    "map",
+    "netcat",
+    "permutations",
+    "reverse",
+    "select",
+    "skip",
+    "skip_while",
+    "sort",
     "t",
+    "tail",
+    "take",
+    "take_while",
+    "tee",
     "transpose",
-    "dedup",
+    "traverse",
     "uniq",
-    "filter",
+    "where",
 ]
 
 
@@ -75,7 +72,11 @@ class Pipe:
         return self.function(other)
 
     def __call__(self, *args, **kwargs):
-        return Pipe(lambda x: self.function(x, *args, **kwargs))
+        return Pipe(
+            lambda iterable, *args2, **kwargs2: self.function(
+                iterable, *args, *args2, **kwargs, **kwargs2
+            )
+        )
 
 
 @Pipe
@@ -171,7 +172,7 @@ def traverse(args):
 @Pipe
 def tee(iterable):
     for item in iterable:
-        sys.stdout.write(str(item) + "\n")
+        sys.stdout.write(repr(item) + "\n")
         yield item
 
 
@@ -214,21 +215,6 @@ def sort(iterable, key=None, reverse=False):  # pylint: disable=redefined-outer-
 @Pipe
 def reverse(iterable):
     return reversed(iterable)
-
-
-@Pipe
-def strip(iterable, chars=None):
-    return iterable.strip(chars)
-
-
-@Pipe
-def rstrip(iterable, chars=None):
-    return iterable.rstrip(chars)
-
-
-@Pipe
-def lstrip(iterable, chars=None):
-    return iterable.lstrip(chars)
 
 
 @Pipe
