@@ -18,3 +18,5 @@ pip-log.txt
 .coverage
 .tox
 .mypy_cache/
+.venv/
+.envrc
