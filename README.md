@@ -10,7 +10,7 @@ As an example, here is the solution for the 2nd Euler Project exercise:
 > Find the sum of all the even-valued terms in Fibonacci which do not
   exceed four million.
 
-Given fib a generator of Fibonacci numbers:
+Given `fib` a generator of Fibonacci numbers:
 
 ```python
 sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
@@ -275,7 +275,7 @@ This has already been discussed in [#74](https://github.com/JulienPalard/Pipe/is
 
 An `@Pipe` is often easily implemented in a 1 to 3 lines of code
 function, and the `pipe` module does not aim at giving all
-possibilities, it aimes at giving the `Pipe` decorator.
+possibilities, it aims at giving the `Pipe` decorator.
 
 So if you need more pipes, closing pipes, weired pipes, you-name-it,
 feel free to implement them on your project, and consider the
@@ -481,11 +481,9 @@ while the predicate is true, then yields others:
 
 ```
 
-## `sort(key=None)`
+## `sort(key=None, reverse=False)`
 
-Like Python's built-in "sorted" primitive. Allows cmp (Python 2.x
-only), key, and reverse arguments. By default sorts using the
-identity function as the key.
+Like Python's built-in "sorted" primitive.
 
 ```python
 >>> from pipe import sort
