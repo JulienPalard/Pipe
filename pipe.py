@@ -1,7 +1,9 @@
-#!/usr/bin/env python
+"""Library allowing a sh like infix syntax using pipes."""
 
-"""Module enabling a sh like infix syntax (using pipes).
-"""
+__author__ = "Julien Palard <julien@python.org>"
+__version__ = "2.0"
+__credits__ = """Jérôme Schneider for teaching me the Python datamodel,
+and all contributors."""
 
 import functools
 import itertools
@@ -10,40 +12,6 @@ import sys
 from contextlib import closing
 from collections import deque
 import builtins
-
-
-__author__ = "Julien Palard <julien@eeple.fr>"
-__credits__ = """Jerome Schneider, for his Python skillz,
-and dalexander for contributing"""
-__date__ = "27 Jul 2018"
-__version__ = "1.6.0"
-__all__ = [
-    "Pipe",
-    "chain",
-    "chain_with",
-    "dedup",
-    "filter",
-    "groupby",
-    "islice",
-    "izip",
-    "map",
-    "netcat",
-    "permutations",
-    "reverse",
-    "select",
-    "skip",
-    "skip_while",
-    "sort",
-    "t",
-    "tail",
-    "take",
-    "take_while",
-    "tee",
-    "transpose",
-    "traverse",
-    "uniq",
-    "where",
-]
 
 
 class Pipe:
