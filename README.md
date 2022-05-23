@@ -1,4 +1,10 @@
-# Infix programming toolkit
+# Pipe — Infix programming toolkit
+
+[![PyPI](https://img.shields.io/pypi/v/pipe)
+ ![Monthly downloads](https://img.shields.io/pypi/dm/pipe)
+ ![Supported Python Version](https://img.shields.io/pypi/pyversions/pipe.svg)
+](https://pypi.org/project/pipe)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/JulienPalard/pipe/Tests/main)](https://github.com/JulienPalard/pipe/actions)
 
 Module enabling a sh like infix syntax (using pipes).
 
