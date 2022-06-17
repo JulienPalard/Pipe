@@ -247,7 +247,7 @@ so all pipes returning non-iterables are now deprecated and were
 removed in pipe 2.0.
 
 
-## What shoud I do?
+## What should I do?
 
 Oh, you just upgraded pipe, got an exception, and landed here? You
 have three solutions:
