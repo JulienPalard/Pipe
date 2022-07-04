@@ -277,7 +277,7 @@ An `@Pipe` is often easily implemented in a 1 to 3 lines of code
 function, and the `pipe` module does not aim at giving all
 possibilities, it aims at giving the `Pipe` decorator.
 
-So if you need more pipes, closing pipes, weired pipes, you-name-it,
+So if you need more pipes, closing pipes, weird pipes, you-name-it,
 feel free to implement them on your project, and consider the
 already-implemented ones as examples on how to do it.
 
