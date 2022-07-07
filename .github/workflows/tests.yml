@@ -1,0 +1,42 @@
+---
+
+name: Tests
+
+on: [push, pull_request]
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.7'
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: setup
+        run: |
+          python3.10 -m pip install --upgrade pip
+          python3.10 -m pip install --upgrade tox
+
+      - name: run tests
+        run: python3.10 -m tox -q
