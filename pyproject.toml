@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pipe"
-description = "Module enablig a sh like infix syntax (using pipes)"
+description = "Module enabling a sh like infix syntax (using pipes)"
 readme = "README.md"
 license = {text = "MIT License"}
 dynamic = ["version"]
