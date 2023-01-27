@@ -22,6 +22,10 @@ def test_aliasing():
     assert list(range(10) | is_even) == [0, 2, 4, 6, 8]
 
 
+def test_batching():
+    assert list(range(10) | pipe.batch(3)) == [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9,]]
+
+
 def test_netcat():
     data = [
         b"HEAD / HTTP/1.0\r\n",

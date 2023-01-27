@@ -46,6 +46,19 @@ class Pipe:
             )
         )
 
+@Pipe
+def batch(iterable, size):
+    current_batch = []
+    counter = 0
+    for item in iterable:
+        current_batch.append(item)
+        counter += 1
+        if counter == size:
+            yield current_batch
+            current_batch = []
+            counter = 0    
+    if current_batch:
+        yield current_batch
 
 @Pipe
 def take(iterable, qte):
