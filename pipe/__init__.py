@@ -205,4 +205,4 @@ izip = Pipe(zip)
 if __name__ == "__main__":
     import doctest
 
-    doctest.testfile("README.md")
+    doctest.testfile("../README.md")
