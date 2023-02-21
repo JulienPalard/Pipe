@@ -103,6 +103,19 @@ def uniq(iterable, key=lambda x: x):
 
 
 @Pipe
+def enumerate(iterable, start=0, step=1):
+    """
+    Enumerate values with an incrementing count.
+
+    For a pipe:
+        [i_0, i_1, i_2, ..., i_n]
+    returns:
+        [(start, i_0), (start+step, i_1), ..., (start+n*step, i_n)]
+    """
+    return itertools.count(start=start, step=step) | izip(iterable)
+
+
+@Pipe
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210

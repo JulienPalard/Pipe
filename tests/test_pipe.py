@@ -32,3 +32,9 @@ def test_netcat():
     for packet in data | pipe.netcat("python.org", 80):
         response += packet.decode("UTF-8")
     assert "HTTP" in response
+
+
+def test_enumerate():
+    data = [4, "abc", {"key": "value"}]
+    expected = [(5, 4), (8, "abc"), (11, {"key": "value"})]
+    assert list(data | pipe.enumerate(start=5, step=3)) == expected
