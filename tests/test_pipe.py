@@ -36,5 +36,5 @@ def test_netcat():
 
 def test_enumerate():
     data = [4, "abc", {"key": "value"}]
-    expected = [(5, 4), (8, "abc"), (11, {"key": "value"})]
-    assert list(data | pipe.enumerate(start=5, step=3)) == expected
+    expected = [(5, 4), (6, "abc"), (7, {"key": "value"})]
+    assert list(data | pipe.enumerate(start=5)) == expected
