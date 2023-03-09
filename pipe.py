@@ -102,6 +102,9 @@ def uniq(iterable, key=lambda x: x):
         prevkey = itemkey
 
 
+enumerate = Pipe(builtins.enumerate)
+
+
 @Pipe
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC

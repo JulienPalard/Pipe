@@ -340,6 +340,20 @@ Deduplicate values, using the given `key` function if provided.
 ```
 
 
+## `enumerate(start=0)`
+
+The builtin `enumerate()` as a Pipe:
+
+```python
+>>> from pipe import enumerate
+>>> list(['apple', 'banana', 'citron'] | enumerate)
+[(0, 'apple'), (1, 'banana'), (2, 'citron')]
+>>> list(['car', 'truck', 'motorcycle', 'bus', 'train'] | enumerate(start=6))
+[(6, 'car'), (7, 'truck'), (8, 'motorcycle'), (9, 'bus'), (10, 'train')]
+
+```
+
+
 ## `filter(predicate)`
 
 Alias for `where(predicate)`, see `where(predicate)`.
