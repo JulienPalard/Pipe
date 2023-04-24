@@ -38,3 +38,15 @@ def test_enumerate():
     data = [4, "abc", {"key": "value"}]
     expected = [(5, 4), (6, "abc"), (7, {"key": "value"})]
     assert list(data | pipe.enumerate(start=5)) == expected
+
+
+def test_concatenate_pipes():
+    data = range(10)
+    is_even = pipe.where(lambda x: x % 2 == 0)
+    higher_than_4 = pipe.where(lambda x: x > 4)
+    expected = [6,8]
+    # standard behavior
+    assert list(data | is_even | higher_than_4) == expected
+    # concatenated pipes
+    is_even_and_higher_than_4 = is_even | higher_than_4
+    assert list(data | is_even_and_higher_than_4) == expected
