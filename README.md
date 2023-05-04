@@ -760,3 +760,24 @@ processing at value 3
 processing at value 4
 [0, 2]
 ```
+
+# Chaining pipes
+
+You can combine multiple pipes into a new one:
+
+```python
+class ErrorDatabase:
+  def __init__(self):
+      self.lines = []
+
+  def filter_lines_by(self, predicate):
+    filtered_lines = list(self.lines | predicate)
+    # further processing of filtered_lines
+    # ...
+    return filtered_lines
+
+db = ErrorDatabase()
+# here we combine pipes into a new one to pass it to a function call
+expired_reports = has_error_code | reported_by_end_customer | older_than_days(30)
+errors = db.filter_lines_by(expired_reports)
+```
