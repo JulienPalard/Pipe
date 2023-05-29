@@ -39,8 +39,19 @@ class Pipe:
     def __ror__(self, other):
         return self.function(other)
 
+    # SEE: https://github.com/JulienPalard/Pipe/pull/88
+    def __or__(self, other):
+        cls = self.__class__
+        if isinstance(other, Pipe):
+            return cls(lambda iterable, *args2, **kwargs2: (
+                other.function(self.function(iterable, *args2, **kwargs2))))
+        # -- CASE: other is pipeable only
+        return cls(lambda iterable, *args2, **kwargs2: (
+                self.function(iterable, *args2, **kwargs2) | other))
+
     def __call__(self, *args, **kwargs):
-        return Pipe(
+        cls = self.__class__
+        return cls(
             lambda iterable, *args2, **kwargs2: self.function(
                 iterable, *args, *args2, **kwargs, **kwargs2
             )
