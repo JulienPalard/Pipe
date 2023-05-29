@@ -229,28 +229,31 @@ Or now with a flag:
 ...
 Hello
 hello
+
 ```
+
 
 ## Pipeline Recipes
 
-A **pipeline recipe** provides a pipeline without its pipe-source (sequence/stream).
-A pipeline may provide a complex pipeline parts.
-It is easier for the user of the pipeline to just use it (without knowing the details).
+A **pipeline recipe** (aka: partial pipe) provides a pipeline without its pipe-source (sequence/stream).
+A pipeline may consist of several complex pipeline parts.
+It is easier to just use a **pipeline recipe** (without need of knowing the details).
 In addition, the use of the **pipeline recipe**:
 
 * is less error-prone and
 * the canned **pipeline recipe** can be tested in advance
 
+
 ### SOLUTION 1: Use "yield from" expressions
 
 ```python
 # -- FILE: example1_pipeline_recipe_with_yield_from.py
-from pipe import Pipe
-from example_common_parts import select_even_numbers, multiply_by
+from pipe import Pipe as as_pipe
+from example_common_pipes import select_even_numbers, multiply_by
 
 # -- PIPELINE RECIPE: Using pipe-function with yield-from
-# ADVANTAGE: pipeline parametrization can be done late.
-@Pipe
+# ADVANTAGE: Pipeline parametrization can be done late.
+@as_pipe
 def select_even_numbers_and_multiply_by(iterable, factor):
     yield from (iterable | select_even_numbers | multiply_by(factor))
 
@@ -260,15 +263,15 @@ expected = [0, 6, 12, 18]
 assert results == expected
 ```
 
-### SOLUTION 2: Use or-pipes expressions
+### SOLUTION 2: Use or-pipe expressions
 
 ```python
 # -- FILE: example2_pipeline_recipe_with_or_pipes.py
-from pipe import Pipe
-from example_common_parts import select_even_numbers, multiply_by
+# REQUIRES: or-pipe expressions
+from example_common_pipes import select_even_numbers, multiply_by
 
-# -- PIPELINE RECIPE: Using or-pipes expressions
-# NOTE: pipeline parametrization must be done early (when pipeline is defined).
+# -- PIPELINE RECIPE: Using or-pipe expressions
+# NOTE: Pipeline parametrization must be done early (when pipeline is defined).
 select_even_numbers_and_multiply_by_3 = select_even_numbers | multiply_by(3)
 
 numbers = range(8)
@@ -277,20 +280,43 @@ expected = [0, 6, 12, 18]
 assert results == expected
 ```
 
+### SOLUTION 3: Use make-pipe idiom with or-pipe expressions
+
 ```python
-# -- FILE: example_common_parts.py
-@Pipe
+# -- FILE: example3_pipeline_recipe_with_make_pipe_using_or_pipes.py
+# REQUIRES: or-pipe expressions
+from example_common_pipes import select_even_numbers, multiply_by
+
+# -- PIPELINE RECIPE: Using make_pipe4<PIPE_RECIPE> as factory function
+# ADVANTAGE: Pipeline parametrization can be done late.
+def make_pipe4select_even_numbers_and_multiply_by(factor):
+    # -- USES: or-pipe expressions
+    return select_even_numbers | multiply_by(factor)
+
+select_even_numbers_and_multiply_by_3 = make_pipe4select_even_numbers_and_multiply_by(3)
+
+numbers = range(8)
+results = list(numbers | select_even_numbers_and_multiply_by_3)
+expected = [0, 6, 12, 18]
+assert results == expected
+```
+
+```python
+# -- FILE: example_common_pipes.py
+from pipe import Pipe as as_pipe
+
+@as_pipe
 def select_numbers_modulo(iterable, modulus):
     for number in iterable:
         if (number % modulus) == 0:
             yield number
 
-@Pipe
+@as_pipe
 def multiply_by(iterable, factor):
     for number in iterable:
         yield number * factor
 
-@Pipe
+@as_pipe
 def select_even_numbers(iterable):
     yield from (iterable | select_numbers_modulo(2))
 ```
