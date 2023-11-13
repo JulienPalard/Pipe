@@ -32,7 +32,7 @@ class Pipe:
     # 2, 4, 6
     """
 
-    def __init__(self, function):
+    def __init__(self, function, *args, **kwargs):
         self.function = lambda iterable, *args2, **kwargs2: function(
             iterable, *args, *args2, **kwargs, **kwargs2
         )
