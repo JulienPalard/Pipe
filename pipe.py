@@ -200,6 +200,13 @@ def transpose(iterable):
     return list(zip(*iterable))
 
 
+@Pipe
+def batched(iterable, n):
+    iterator = iter(iterable)
+    while batch := tuple(itertools.islice(iterator, n)):
+        yield batch
+
+
 chain = Pipe(itertools.chain.from_iterable)
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)

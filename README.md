@@ -294,6 +294,17 @@ See the `Constructing your own` paragraph below.
 
 Alphabetical list of available pipes; when several names are listed for a given pipe, these are aliases.
 
+## `batched`
+
+Like Python 3.12 `itertool.batched`:
+
+```python
+>>> from pipe import batched
+>>> list("ABCDEFG" | batched(3))
+[('A', 'B', 'C'), ('D', 'E', 'F'), ('G',)]
+
+```
+
 ## `chain`
 
 Chain a sequence of iterables:
