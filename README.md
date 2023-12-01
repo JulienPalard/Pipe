@@ -167,6 +167,12 @@ is strictly equivalent to:
 some_iterable | some_pipe(1)(2)(3)
 ```
 
+It's also possible to create a partially initialized custom pipe in one line:
+
+```python
+some_iterable | Pipe(some_func, 1, 2, 3)
+```
+
 So it can be used to specialize pipes, first a dummy example:
 
 ```python
