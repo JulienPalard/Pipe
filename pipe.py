@@ -39,8 +39,15 @@ class Pipe:
     def __ror__(self, other):
         return self.function(other)
 
+    def __or__(self, other):
+        return self.__class__(
+            lambda iterable, *args2, **kwargs2: other.function(
+                self.function(iterable, *args2, **kwargs2)
+            )
+        )
+
     def __call__(self, *args, **kwargs):
-        return Pipe(
+        return self.__class__(
             lambda iterable, *args2, **kwargs2: self.function(
                 iterable, *args, *args2, **kwargs, **kwargs2
             )
