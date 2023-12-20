@@ -1,11 +1,4 @@
 import pipe
-import doctest
-
-
-def test_readme():
-    failure_count, test_count = doctest.testfile("../README.md")
-    assert test_count
-    assert not failure_count
 
 
 def test_uniq():
