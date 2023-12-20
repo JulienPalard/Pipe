@@ -5,6 +5,14 @@ def test_uniq():
     assert list(() | pipe.uniq) == []
 
 
+def test_take_zero():
+    assert list([1, 2, 3] | pipe.take(0)) == []
+
+
+def test_take_one():
+    assert list([1, 2, 3] | pipe.take(1)) == [1]
+
+
 def test_empty_iterable():
     assert list([] | pipe.take(999)) == []
 
