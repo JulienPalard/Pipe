@@ -1,7 +1,7 @@
 """Library allowing a sh like infix syntax using pipes."""
 
 __author__ = "Julien Palard <julien@python.org>"
-__version__ = "2.0"
+__version__ = "2.1"
 __credits__ = """Jérôme Schneider for teaching me the Python datamodel,
 and all contributors."""
 
@@ -52,12 +52,13 @@ class Pipe:
 @Pipe
 def take(iterable, qte):
     "Yield qte of elements in the given iterable."
+    if not qte:
+        return
     for item in iterable:
-        if qte > 0:
-            qte -= 1
-            yield item
-        else:
-            return
+        yield item
+        qte -= 1
+        if qte == 0:
+            break
 
 
 @Pipe
@@ -200,6 +201,13 @@ def t(iterable, y):
 @Pipe
 def transpose(iterable):
     return list(zip(*iterable))
+
+
+@Pipe
+def batched(iterable, n):
+    iterator = iter(iterable)
+    while batch := tuple(itertools.islice(iterator, n)):
+        yield batch
 
 
 chain = Pipe(itertools.chain.from_iterable)

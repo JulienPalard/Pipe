@@ -21,12 +21,12 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-requires-python = ">= 3.7"
+requires-python = ">= 3.8"
 
 [project.urls]
 repository = "https://github.com/JulienPalard/Pipe"
 
-[tools.setuptools]
+[tool.setuptools]
 py-modules = [
     "pipe",
 ]

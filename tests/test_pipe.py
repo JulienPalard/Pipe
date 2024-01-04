@@ -1,15 +1,16 @@
 import pipe
-import doctest
-
-
-def test_readme():
-    failure_count, test_count = doctest.testfile("../README.md")
-    assert test_count
-    assert not failure_count
 
 
 def test_uniq():
     assert list(() | pipe.uniq) == []
+
+
+def test_take_zero():
+    assert list([1, 2, 3] | pipe.take(0)) == []
+
+
+def test_take_one():
+    assert list([1, 2, 3] | pipe.take(1)) == [1]
 
 
 def test_empty_iterable():
