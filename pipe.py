@@ -32,8 +32,10 @@ class Pipe:
     # 2, 4, 6
     """
 
-    def __init__(self, function):
-        self.function = function
+    def __init__(self, function, *args, **kwargs):
+        self.function = lambda iterable, *args2, **kwargs2: function(
+            iterable, *args, *args2, **kwargs, **kwargs2
+        )
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):

@@ -534,6 +534,40 @@ optional arguments after:
 ```
 
 
+## One-off pipes
+
+Sometimes you just want a one-liner, when creating a pipe you can specify the function's positional and named arguments directly
+
+```python
+>>> from itertools import combinations
+
+>>> list(range(5) | Pipe(combinations, 2))
+[(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
+>>>
+```
+
+a simple running sum with initial starting value
+
+```python
+>>> from itertools import accumulate
+
+>>> list(range(10) | Pipe(accumulate, initial=1))
+[1, 1, 2, 4, 7, 11, 16, 22, 29, 37, 46]
+>>>
+```
+
+or filter your data based on some criteria
+
+```python
+>>> from itertools import compress
+
+list(range(20) | Pipe(compress, selectors=[1, 0] * 10))
+[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+>>> list(range(20) | Pipe(compress, selectors=[0, 1] * 10))
+[1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+>>>
+```
+
 ## Euler project samples
 
 > Find the sum of all the multiples of 3 or 5 below 1000.
@@ -578,6 +612,7 @@ For multi-argument pipes then can be partially initialized, you can think of cur
 
 ```python
 some_iterable | some_pipe(1, 2, 3)
+some_iterable | Pipe(some_func, 1, 2, 3)
 ```
 
 is strictly equivalent to:
