@@ -1,8 +1,11 @@
-"""Library allowing a sh like infix syntax using pipes."""
+"""
+Library allowing a sh like infix syntax using pipes.
+Backported to Python 2.7 by ChatGPT and James Sudbury
+"""
 
 __author__ = "Julien Palard <julien@python.org>"
 __version__ = "2.1"
-__credits__ = """Jérôme Schneider for teaching me the Python datamodel,
+__credits__ = """Jerome Schneider for teaching me the Python datamodel,
 and all contributors."""
 
 import functools
@@ -11,7 +14,11 @@ import socket
 import sys
 from contextlib import closing
 from collections import deque
-import builtins
+
+try:
+    import builtins
+except ImportError:
+    import __builtin__ as builtins
 
 
 class Pipe:
@@ -33,20 +40,22 @@ class Pipe:
     """
 
     def __init__(self, function, *args, **kwargs):
-        self.function = lambda iterable, *args2, **kwargs2: function(
-            iterable, *args, *args2, **kwargs, **kwargs2
-        )
+        def pipe_function(iterable, *args2, **kwargs2):
+            combined_kwargs = dict(kwargs, **kwargs2)
+            return function(iterable, *(args + args2), **combined_kwargs)
+
+        self.function = pipe_function
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):
         return self.function(other)
 
     def __call__(self, *args, **kwargs):
-        return Pipe(
-            lambda iterable, *args2, **kwargs2: self.function(
-                iterable, *args, *args2, **kwargs, **kwargs2
-            )
-        )
+        def pipe_function(iterable, *args2, **kwargs2):
+            combined_kwargs = dict(kwargs, **kwargs2)
+            return self.function(iterable, *(args + args2), **combined_kwargs)
+
+        return Pipe(pipe_function)
 
 
 @Pipe
@@ -137,7 +146,8 @@ def traverse(args):
         return
     for arg in args:
         try:
-            yield from arg | traverse
+            for item in traverse(arg):
+                yield item
         except TypeError:
             # not iterable --- output leaf
             yield arg
@@ -206,8 +216,10 @@ def transpose(iterable):
 @Pipe
 def batched(iterable, n):
     iterator = iter(iterable)
-    while batch := tuple(itertools.islice(iterator, n)):
+    batch = tuple(itertools.islice(iterator, n))
+    while batch:
         yield batch
+        batch = tuple(itertools.islice(iterator, n))
 
 
 chain = Pipe(itertools.chain.from_iterable)
