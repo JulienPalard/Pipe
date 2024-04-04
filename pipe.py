@@ -1,7 +1,7 @@
 """Library allowing a sh like infix syntax using pipes."""
 
 __author__ = "Julien Palard <julien@python.org>"
-__version__ = "2.1"
+__version__ = "2.2"
 __credits__ = """Jérôme Schneider for teaching me the Python datamodel,
 and all contributors."""
 
@@ -112,8 +112,7 @@ enumerate = Pipe(builtins.enumerate)
 def permutations(iterable, r=None):
     # permutations('ABCD', 2) --> AB AC AD BA BC BD CA CB CD DA DB DC
     # permutations(range(3)) --> 012 021 102 120 201 210
-    for x in itertools.permutations(iterable, r):
-        yield x
+    yield from itertools.permutations(iterable, r)
 
 
 @Pipe
