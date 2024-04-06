@@ -120,12 +120,12 @@ Chain a sequence of iterables:
 >>>
 ```
 
-Warning : chain only unfold iterable containing ONLY iterables:
+Warning : chain only unfolds an iterable containing ONLY iterables:
 
 ```python
-[1, 2, [3]] | chain
+list([1, 2, [3]] | chain)
 ```
-Gives a `TypeError: chain argument #1 must support iteration`
+Gives a `TypeError: 'int' object is not iterable`
 Consider using traverse.
 
 
