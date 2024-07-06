@@ -23,7 +23,7 @@ Given `fib` a generator of Fibonacci numbers:
 sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
 ```
 
-Each pipes is lazy evalatated, can be aliased, and partially
+Each pipes is lazy evaluated, can be aliased, and partially
 initialized, so it could be rewritten as:
 
 ```python
