@@ -8,10 +8,26 @@ and all contributors."""
 import functools
 import itertools
 import socket
+import inspect
 import sys
 from contextlib import closing
 from collections import deque
 import builtins
+
+
+def _is_a_classmethod(func):
+    """
+    Check if a given function is a class method.
+
+    Args:
+        func (function): The function to check.
+
+    Returns:
+        bool: True if the function is a class method, False otherwise.
+    """
+    signature = inspect.signature(func)
+    parameters = list(signature.parameters.values())
+    return len(parameters) > 0 and parameters[0].name == "cls"
 
 
 class Pipe:
@@ -33,20 +49,48 @@ class Pipe:
     """
 
     def __init__(self, function, *args, **kwargs):
-        self.function = lambda iterable, *args2, **kwargs2: function(
-            iterable, *args, *args2, **kwargs, **kwargs2
-        )
+        self.args = args
+        self.kwargs = kwargs
+        self.function = function
+        self.instance = None
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):
-        return self.function(other)
+        bound_args = [] if self.instance is None else [self.instance]
+        return self.function(*bound_args, other, *self.args, **self.kwargs)
 
     def __call__(self, *args, **kwargs):
         return Pipe(
-            lambda iterable, *args2, **kwargs2: self.function(
-                iterable, *args, *args2, **kwargs, **kwargs2
-            )
+            self.function,
+            *self.args,
+            *args,
+            **self.kwargs,
+            **kwargs,
         )
+
+    def __repr__(self) -> str:
+        return "piped::<%s>(*%s, **%s)" % (
+            self.function.__name__,
+            self.args,
+            self.kwargs,
+        )
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            if owner is None:  # pragma: no cover
+                return self
+            if isinstance(self.function, classmethod):
+                self.instance = owner
+                self.function = self.function.__func__.__get__(None, owner)
+                return self
+            if _is_a_classmethod(self.function):
+                # function is like a classmethod, but not a classmethod
+                # only the first argument is the class, name it cls
+                self.instance = owner
+                return self  # pragma: no cover
+            return self
+        self.instance = instance
+        return self
 
 
 @Pipe

@@ -533,6 +533,55 @@ optional arguments after:
 >>>
 ```
 
+### Organizing using class
+
+You can also organize pipes using classes as shown below:
+
+>>> class Factor:
+...     n: int = 10
+... 
+...     def __init__(self, n: int):
+...         self.n = n
+... 
+...     @Pipe
+...     def mul(self, iterable):
+...         return (x * self.n for x in iterable)
+... 
+>>> fact = Factor(10)
+>>> list([1, 2, 3] | fact.mul)
+[10, 20, 30]
+
+Supported on classmethod
+
+>>> class Factor:
+...     n: int = 10
+... 
+...     def __init__(self, n: int):
+...         self.n = n
+... 
+...     @Pipe
+...     @classmethod
+...     def mul(cls, iterable):
+...         return (x * cls.n for x in iterable)
+... 
+>>> list([1, 2, 3] | Factor.mul)
+[10, 20, 30]
+
+Supported on classmethod like functions
+
+>>> class Factor:
+...     n: int = 10
+... 
+...     def __init__(self, n: int):
+...         self.n = n
+... 
+...     @Pipe
+...     def mul(cls, iterable):
+...         return (x * cls.n for x in iterable)
+... 
+>>> list([1, 2, 3] | Factor.mul)
+[10, 20, 30]
+
 
 ## One-off pipes
 

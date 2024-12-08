@@ -39,3 +39,31 @@ def test_enumerate():
     data = [4, "abc", {"key": "value"}]
     expected = [(5, 4), (6, "abc"), (7, {"key": "value"})]
     assert list(data | pipe.enumerate(start=5)) == expected
+
+
+def test_class_support():
+    class Factory:
+        n = 10
+
+        @pipe.Pipe
+        def mul(self, iterable):
+            return (x * self.n for x in iterable)
+
+    assert list([1, 2, 3] | Factory().mul) == [10, 20, 30]
+
+
+def test_pipe_repr():
+    @pipe.Pipe
+    def sample_pipe(iterable):
+        return (x * 2 for x in iterable)
+
+    assert repr(sample_pipe) == "piped::<sample_pipe>(*(), **{})"
+
+    @pipe.Pipe
+    def sample_pipe_with_args(iterable, factor):
+        return (x * factor for x in iterable)
+
+    pipe_instance = sample_pipe_with_args(3)
+    real_repr = repr(pipe_instance)
+    assert "piped::<sample_pipe_with_args>(" in real_repr
+    assert "3" in real_repr
