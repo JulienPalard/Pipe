@@ -20,28 +20,29 @@ problem](https://projecteuler.net/problem=2):
 Given `fib` a generator of Fibonacci numbers:
 
 ```python
-sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
+>>>sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
 ```
 
-Each pipes is lazy evalatated, can be aliased, and partially
-initialized, so it could be rewritten as:
+Each pipe is evaluated lazily, can be assigned an alias, 
+and supports partial initialization, allowing it to be rewritten as:
 
 ```python
-is_even = where(lambda x: x % 2 == 0)
-sum(fib() | is_even | take_while(lambda x: x < 4000000)
+>>>is_even = where(lambda x: x % 2 == 0)
+>>>sum(fib() | is_even | take_while(lambda x: x < 4000000)
 ```
 
 
 # Installing
 
+There is no need to clone the repository as Pipe is available through PyPI.
 To install the library, you can just run the following command:
 
 ```shell
 # Linux/macOS
-python3 -m pip install pipe
+>>>python3 -m pip install pipe
 
 # Windows
-py -3 -m pip install pipe
+>>>py -3 -m pip install pipe
 ```
 
 
@@ -123,10 +124,10 @@ Chain a sequence of iterables:
 Warning : chain only unfolds an iterable containing ONLY iterables:
 
 ```python
-list([1, 2, [3]] | chain)
+>>>list([1, 2, [3]] | chain)
 ```
 Gives a `TypeError: 'int' object is not iterable`
-Consider using traverse.
+Consider using traverse for nested iterables.
 
 
 ### `chain_with(other)`
@@ -229,13 +230,13 @@ to each element of the given iterable
 The netcat Pipe sends and receive bytes over TCP:
 
 ```python
-data = [
-    b"HEAD / HTTP/1.0\r\n",
-    b"Host: python.org\r\n",
-    b"\r\n",
-]
-for packet in data | netcat("python.org", 80):
-    print(packet.decode("UTF-8"))
+>>>data = [
+>>>    b"HEAD / HTTP/1.0\r\n",
+>>>    b"Host: python.org\r\n",
+>>>    b"\r\n",
+>>>]
+>>>for packet in data | netcat("python.org", 80):
+>>>    print(packet.decode("UTF-8"))
 ```
 
 Gives:
@@ -331,7 +332,7 @@ Like Python's built-in "sorted" primitive.
 
 ### `t`
 
-Like Haskell's operator ":":
+Creates a sequence by appending elements like Haskell’s ":" operator:
 
 ```python
 >>> from pipe import t
@@ -487,9 +488,9 @@ Don't forget they can be aliased:
 You can construct your pipes using the `Pipe` class like:
 
 ```python
-from pipe import Pipe
-square = Pipe(lambda iterable: (x ** 2 for x in iterable))
-map = Pipe(lambda iterable, fct: builtins.map(fct, iterable)
+>>>from pipe import Pipe
+>>>square = Pipe(lambda iterable: (x ** 2 for x in iterable))
+>>>map = Pipe(lambda iterable, fct: builtins.map(fct, iterable)
 >>>
 ```
 
@@ -504,7 +505,7 @@ argument, making the wrapping straight forward:
 >>>
 ```
 
-and that's it `itrable | end(3)` is `deque(iterable, 3)`:
+and that's it `iterable | end(3)` is `deque(iterable, 3)`:
 
 ```python
 >>> list(range(100) | end(3))
@@ -582,7 +583,7 @@ list(range(20) | Pipe(compress, selectors=[1, 0] * 10))
 > exceed four million.
 
 ```python
-sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
+>>>sum(fib() | where(lambda x: x % 2 == 0) | take_while(lambda x: x < 4000000))
 ```
 
 > Find the difference between the sum of the squares of the first one
@@ -611,14 +612,14 @@ A `pipe` can be parametrized without being evaluated:
 For multi-argument pipes then can be partially initialized, you can think of curying:
 
 ```python
-some_iterable | some_pipe(1, 2, 3)
-some_iterable | Pipe(some_func, 1, 2, 3)
+>>>some_iterable | some_pipe(1, 2, 3)
+>>>some_iterable | Pipe(some_func, 1, 2, 3)
 ```
 
 is strictly equivalent to:
 
 ```python
-some_iterable | some_pipe(1)(2)(3)
+>>>some_iterable | some_pipe(1)(2)(3)
 ```
 
 So it can be used to specialize pipes, first a dummy example:
@@ -760,13 +761,13 @@ one returning non-iterables could only be used as the last function of
 a pipe expression, so they are in fact useless:
 
 ```python
-range(100) | where(lambda x: x % 2 == 0) | add
+>>>range(100) | where(lambda x: x % 2 == 0) | add
 ```
 
 can be rewritten with no less readability as:
 
 ```python
-sum(range(100) | where(lambda x: x % 2 == 0))
+>>>sum(range(100) | where(lambda x: x % 2 == 0))
 ```
 
 so all pipes returning non-iterables were deprecated (raising
