@@ -31,6 +31,45 @@ and supports partial initialization, allowing it to be rewritten as:
 >>>sum(fib() | is_even | take_while(lambda x: x < 4000000)
 ```
 
+# Table of Contents
+
+- [Installing](#installing)
+- [Using](#using)
+- [Existing Pipes in this module](#existing-pipes-in-this-module)
+  - [`batched`](#batched)
+  - [`chain`](#chain)
+  - [`chain_with(other)`](#chain_withother)
+  - [`dedup(key=None)`](#dedupkeynone)
+  - [`enumerate(start=0)`](#enumeratestart0)
+  - [`filter(predicate)`](#filterpredicate)
+  - [`groupby(key=None)`](#groupbykeynone)
+  - [`islice()`](#islice)
+  - [`izip()`](#izip)
+  - [`map()`, `select()`](#map-select)
+  - [`netcat`](#netcat)
+  - [`permutations(r=None)`](#permutationsrnone)
+  - [`reverse`](#reverse)
+  - [`select(fct)`](#selectfct)
+  - [`skip()`](#skip)
+  - [`skip_while(predicate)`](#skip_whilepredicate)
+  - [`sort(key=None, reverse=False)`](#sortkeynone-reversefalse)
+  - [`t`](#t)
+  - [`tail(n)`](#tailn)
+  - [`take(n)`](#taken)
+  - [`take_while(predicate)`](#take_whilepredicate)
+  - [`tee`](#tee)
+  - [`transpose()`](#transpose)
+  - [`traverse`](#traverse)
+  - [`uniq(key=None)`](#uniqkeynone)
+  - [`where(predicate)`, `filter(predicate)`](#wherepredicate-filterpredicate)
+- [Constructing your own](#constructing-your-own)
+- [One-off pipes](#one-off-pipes)
+- [Euler project samples](#euler-project-samples)
+- [Going deeper](#going-deeper)
+  - [`Partial pipes`](#partial-pipes)
+  - [`Lazy Evaluation`](#lazy-evaluation)
+  - [`Deprecations`](#deprecations)
+
 
 # Installing
 
