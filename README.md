@@ -848,3 +848,5 @@ feel free to implement them on your project, and consider the
 already-implemented ones as examples on how to do it.
 
 See the `Constructing your own` paragraph below.
+
+- [Constructing your own](#constructing-your-own)
