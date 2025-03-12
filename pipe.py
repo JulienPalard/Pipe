@@ -38,6 +38,9 @@ class Pipe:
         )
         functools.update_wrapper(self, function)
 
+    def __or__(self, other):
+        return Pipe(lambda iterable: self.function(iterable) | other)
+
     def __ror__(self, other):
         return self.function(other)
 
