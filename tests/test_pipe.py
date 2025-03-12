@@ -39,3 +39,8 @@ def test_enumerate():
     data = [4, "abc", {"key": "value"}]
     expected = [(5, 4), (6, "abc"), (7, {"key": "value"})]
     assert list(data | pipe.enumerate(start=5)) == expected
+
+
+def test_composition():
+    p = pipe.where(lambda x: not x % 2) | pipe.take(5)
+    assert list(range(100) | p) == [0, 2, 4, 6, 8]
