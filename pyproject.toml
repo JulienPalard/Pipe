@@ -1,36 +1,125 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "pipe"
 description = "Module enabling a sh like infix syntax (using pipes)"
 readme = "README.md"
-license = {text = "MIT License"}
+license = { text = "MIT License" }
 dynamic = ["version"]
-authors = [
-    {name = "Julien Palard", email = "julien@palard.fr"},
-]
+authors = [{ name = "Julien Palard", email = "julien@palard.fr" }]
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Development Status :: 5 - Production/Stable",
     "Operating System :: OS Independent",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 requires-python = ">= 3.8"
+keywords = ["pipe"]
 
 [project.urls]
 repository = "https://github.com/JulienPalard/Pipe"
 
-[tool.setuptools]
-py-modules = [
-    "pipe",
-]
-include-package-data = false
+[dependency-groups]
+ruff = ["ruff>=0.10.0"]
+coverage = ["coverage[toml]", "covdefaults"]
+dev = [{ include-group = "ruff" }, "pre-commit>=2.21.0", "tox>=4.23.2"]
+test = [{ include-group = "coverage" }, "mock", "pytest", "pytest-cov"]
 
-[tool.setuptools.dynamic.version]
-attr = "pipe.__version__"
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "pipe.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["pipe.py"]
+
+[tool.hatch.build.targets.wheel]
+include = ["pipe.py"]
+
+[tool.ruff]
+lint.pydocstyle.convention = "numpy"
+lint.extend-select = ["C", "D", "FURB", "I", "N", "PL", "PTH", "SIM"]
+lint.extend-ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # 
+    "D103", # Missing docstring in public function
+    "D105",
+]
+
+[tool.coverage]
+html.show_contexts = true
+html.skip_covered = false
+run.parallel = true
+run.omit = [
+    "tests/*.py",
+    # add others
+]
+
+
+[tool.tox]
+requires = ["tox>=4.23.2", "tox-uv>=1.13"]
+isolated_build = true
+env_list = ["ruff", "cov-report", "py38", "py39", "py311", "py312", "py313"]
+
+[tool.tox.env_run_base]
+commands = [
+    [
+        "coverage",
+        "run",
+        "-m",
+        "pytest",
+        "--doctest-glob=README.md",
+        "--junit-xml=.build/tests/pytest_{env_name}_junit.xml",
+    ],
+]
+set_env.COVERAGE_FILE = "{toxworkdir}/.coverage"
+dependency_groups = ["test"]
+package = "wheel"
+wheel_build_env = ".pkg"
+
+[tool.tox.env.ruff]
+recreate = false
+skip_install = true
+dependency_groups = ["ruff"]
+commands = [
+    # commands
+    ["ruff", "format", "--check", "."],
+    ["ruff", "check", "."],
+]
+
+[tool.tox.env.cov-report]
+parallel_show_output = true
+recreate = false
+set_env.COVERAGE_FILE = "{toxworkdir}/.coverage"
+skip_install = true
+dependency_groups = ["coverage"]
+depends = ["py38", "py39", "py311", "py312", "py313"]
+commands = [
+    [
+        "coverage",
+        "combine",
+    ],
+    [
+        "coverage",
+        "html",
+        "-d",
+        ".build/coverage",
+    ],
+    [
+        "coverage",
+        "report",
+    ],
+]

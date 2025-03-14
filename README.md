@@ -537,6 +537,9 @@ optional arguments after:
 
 You can also organize pipes using classes as shown below:
 
+1. As a `method` method
+
+```python
 >>> class Factor:
 ...     n: int = 10
 ... 
@@ -550,9 +553,12 @@ You can also organize pipes using classes as shown below:
 >>> fact = Factor(10)
 >>> list([1, 2, 3] | fact.mul)
 [10, 20, 30]
+>>>
+```
 
-Supported on classmethod
+1. As a `classmethod`
 
+```python
 >>> class Factor:
 ...     n: int = 10
 ... 
@@ -566,22 +572,25 @@ Supported on classmethod
 ... 
 >>> list([1, 2, 3] | Factor.mul)
 [10, 20, 30]
+>>>
+```
 
 Supported on classmethod like functions
 
+```py
 >>> class Factor:
-...     n: int = 10
-... 
 ...     def __init__(self, n: int):
 ...         self.n = n
 ... 
 ...     @Pipe
-...     def mul(cls, iterable):
-...         return (x * cls.n for x in iterable)
+...     @staticmethod
+...     def mul(iterable):
+...         return (x * 10 for x in iterable)
 ... 
 >>> list([1, 2, 3] | Factor.mul)
 [10, 20, 30]
-
+>>>
+```
 
 ## One-off pipes
 
