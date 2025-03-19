@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pipe"
@@ -36,17 +36,10 @@ coverage = ["coverage[toml]", "covdefaults"]
 dev = [{ include-group = "ruff" }, "pre-commit>=2.21.0", "tox>=4.23.2"]
 test = [{ include-group = "coverage" }, "mock", "pytest", "pytest-cov"]
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.version]
-path = "pipe.py"
-
-[tool.hatch.build.targets.sdist]
-include = ["pipe.py"]
-
-[tool.hatch.build.targets.wheel]
-include = ["pipe.py"]
+[tool.setuptools]
+py-modules = ["pipe"]
+include-package-data = false
+dynamic.version.attr = "pipe.__version__"
 
 [tool.ruff]
 lint.pydocstyle.convention = "numpy"

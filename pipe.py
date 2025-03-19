@@ -47,7 +47,6 @@ class Pipe:
         self.args = args
         self.kwargs = kwargs
         self.function = function
-        self.instance = None
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):
@@ -88,7 +87,7 @@ class Pipe:
         return Pipe(
             function=self.function.__get__(instance, owner),
             *self.args,
-            *self.kwargs,
+            **self.kwargs,
         )
 
 

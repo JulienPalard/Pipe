@@ -52,6 +52,16 @@ def test_class_support():
     assert list([1, 2, 3] | Factory().mul) == [10, 20, 30]
 
 
+def test_class_support_with_named_parameter():
+    class Factory:
+        @pipe.Pipe
+        @staticmethod
+        def mul(iterable, factor=None):
+            return (x * factor for x in iterable)
+
+    assert list([1, 2, 3] | Factory.mul(factor=5)) == [5, 10, 15]
+
+
 def test_pipe_repr():
     @pipe.Pipe
     def sample_pipe(iterable):
