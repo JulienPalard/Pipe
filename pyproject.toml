@@ -60,6 +60,10 @@ run.omit = [
     "tests/*.py",
     # add others
 ]
+run.plugins = [
+    # all plugins
+    "covdefaults",
+]
 
 
 [tool.tox]

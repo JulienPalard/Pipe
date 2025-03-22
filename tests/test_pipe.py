@@ -41,7 +41,7 @@ def test_enumerate():
     assert list(data | pipe.enumerate(start=5)) == expected
 
 
-def test_class_support():
+def test_class_support_on_methods():
     class Factory:
         n = 10
 
@@ -50,6 +50,34 @@ def test_class_support():
             return (x * self.n for x in iterable)
 
     assert list([1, 2, 3] | Factory().mul) == [10, 20, 30]
+
+
+def test_class_support_on_static_methods():
+    class TenFactory:
+        @pipe.Pipe
+        @staticmethod
+        def mul(iterable):
+            return (x * 10 for x in iterable)
+
+    assert list([1, 2, 3] | TenFactory.mul) == [10, 20, 30]
+
+
+def test_class_support_on_class_methods():
+    class Factory:
+        n = 10
+
+        @pipe.Pipe
+        @classmethod
+        def mul(cls, iterable):
+            return (x * cls.n for x in iterable)
+
+    assert list([1, 2, 3] | Factory.mul) == [10, 20, 30]
+
+    Factory.n = 2
+    assert list([1, 2, 3] | Factory.mul) == [2, 4, 6]
+
+    obj = Factory()
+    assert list([1, 2, 3] | obj.mul) == [2, 4, 6]
 
 
 def test_class_support_with_named_parameter():
