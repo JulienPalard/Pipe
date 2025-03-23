@@ -65,6 +65,8 @@ class Pipe:
             provided arguments and keyword arguments.
 
         """
+        if other is Ellipsis or isinstance(other, Pipe):
+            return ChainedPipes.chain_with(other, self)
         return self.function(other, *self.args, **self.kwargs)
 
     def __call__(self, *args, **kwargs):
@@ -89,6 +91,50 @@ class Pipe:
             *self.args,
             **self.kwargs,
         )
+
+
+class ChainedPipes(Pipe):
+    """
+    Chain of pipes for sequential application.
+
+    This class enables chaining multiple Pipe objects and applying them
+    sequentially using the `|` operator. It provides a way to define the
+    pipes sequence and use it later.
+
+    Parameters
+    ----------
+    *pipes : Pipe
+        A variable number of Pipe objects to be chained together.
+
+    Examples
+    --------
+    Define a sequence of pipes and use it:
+
+        >>> from pipe import take, skip
+        >>> pipeline = ... | skip(2) take(3))
+        >>> list([1, 2, 3, 4, 5, 6] | pipeline)
+        [3, 4, 5]
+
+    """
+
+    def __init__(self, *pipes):
+        self.pipes = pipes
+
+    def __ror__(self, other):
+        result = other
+        for pipe in self.pipes:
+            result = result | pipe
+        return result
+
+    @classmethod
+    def chain_with(cls, other, ref):
+        if isinstance(other, ChainedPipes):
+            return ChainedPipes(*other.pipes, ref)
+        elif other is Ellipsis:
+            return ChainedPipes(ref)
+
+    def __repr__(self):
+        return "...\n| %s" % "\n| ".join([str(i) for i in self.pipes])
 
 
 @Pipe

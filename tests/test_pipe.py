@@ -105,3 +105,29 @@ def test_pipe_repr():
     real_repr = repr(pipe_instance)
     assert "piped::<sample_pipe_with_args>(" in real_repr
     assert "3" in real_repr
+
+
+def test_chained_pipes():
+    pipeline = ... | pipe.skip(2) | pipe.take(3)
+
+    assert list(range(10) | pipeline) == [2, 3, 4]
+
+    @pipe.Pipe
+    def double(iterable):
+        return (x * 2 for x in iterable)
+
+    extended_pipeline = pipeline | double
+    assert list(range(10) | extended_pipeline) == [4, 6, 8]
+    assert list(range(10) | pipeline | double) == [4, 6, 8]
+
+
+def test_chained_pipes_on_bad_constructor():
+    assert pipe.ChainedPipes.chain_with(None, None) is None
+
+
+def test_chained_pipes_reps():
+    pipeline = ... | pipe.skip(2) | pipe.take(3)
+
+    repr_pipeline = repr(pipeline)
+    assert repr(pipe.skip(2)) in repr_pipeline
+    assert repr(pipe.take(3)) in repr_pipeline

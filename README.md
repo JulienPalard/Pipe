@@ -482,6 +482,46 @@ Don't forget they can be aliased:
 >>>
 ```
 
+## Chained pipes
+
+The Pipe class supports chaining multiple transformations using the `|` operator.
+
+### How It Works
+
+* Use `|` between Pipe instances to create a pipeline, and use the Ellipsis (`...`) operator as the first element instead of an iterable.
+* Apply the pipeline to data using `data | pipeline`.
+
+### Examples of chained pipes Usage
+
+```python
+@Pipe
+def double(iterable):
+    return (x * 2 for x in iterable)
+
+@Pipe
+def square(iterable):
+    return (x ** 2 for x in iterable)
+
+@Pipe
+def increment(iterable):
+    return (x + 1 for x in iterable)
+
+pipeline = double | square | increment  # Chain operations
+
+result = [1, 2, 3] | pipeline  # Apply to data
+print(list(result))  # Output: [5, 17, 37]
+```
+
+Other example:
+
+```py
+>>> import pipe
+>>> pipeline = ... | pipe.skip(2) | pipe.take(3)
+>>> list(range(10) | pipeline)
+[2, 3, 4]
+>>>
+```
+
 ## Constructing your own
 
 You can construct your pipes using the `Pipe` class like:
@@ -533,7 +573,7 @@ optional arguments after:
 >>>
 ```
 
-### Organizing pipes more effectively using classes
+## Organizing pipes more effectively using classes
 
 The `@Pipe` decorator isn't just for functions-it also works with classes. You can use it with instance methods, class methods, and static methods to better structure your code while keeping it pipeable.
 
