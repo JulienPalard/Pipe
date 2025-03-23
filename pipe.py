@@ -5,53 +5,95 @@ __version__ = "2.2"
 __credits__ = """Jérôme Schneider for teaching me the Python datamodel,
 and all contributors."""
 
+import builtins
 import functools
 import itertools
 import socket
 import sys
-from contextlib import closing
 from collections import deque
-import builtins
+from contextlib import closing
 
 
 class Pipe:
     """
-    Represent a Pipeable Element :
-    Described as :
-    first = Pipe(lambda iterable: next(iter(iterable)))
-    and used as :
-    print [1, 2, 3] | first
-    printing 1
+    Pipe class enable a sh like infix syntax.
 
-    Or represent a Pipeable Function :
-    It's a function returning a Pipe
-    Described as :
-    select = Pipe(lambda iterable, pred: (pred(x) for x in iterable))
-    and used as :
-    print [1, 2, 3] | select(lambda x: x * 2)
-    # 2, 4, 6
+    This class allows you to create a pipeline of operations by chaining functions
+    together using the `|` operator. It wraps a function and its arguments, enabling
+    you to apply the function to an input in a clean and readable manner.
+
+    Examples
+    --------
+    Create a new Pipe operation:
+
+        >>> from pipe import Pipe
+        >>> @Pipe
+        ... def double(iterable):
+        ...     return (x * 2 for x in iterable)
+
+    Use the Pipe operation:
+
+        >>> result = [1, 2, 3] | double
+        >>> list(result)
+        [2, 4, 6]
+
+    Notes
+    -----
+    ...
+
     """
 
     def __init__(self, function, *args, **kwargs):
-        self.function = lambda iterable, *args2, **kwargs2: function(
-            iterable, *args, *args2, **kwargs, **kwargs2
-        )
+        self.args = args
+        self.kwargs = kwargs
+        self.function = function
         functools.update_wrapper(self, function)
 
     def __ror__(self, other):
-        return self.function(other)
+        """
+        Implement the reverse pipe operator (`|`) for the object.
+
+        Parameters
+        ----------
+        other : Any
+            The left-hand operand of the `|` operator.
+
+        Returns
+        -------
+        Any
+            The result of applying the stored function to `other` with the
+            provided arguments and keyword arguments.
+
+        """
+        return self.function(other, *self.args, **self.kwargs)
 
     def __call__(self, *args, **kwargs):
         return Pipe(
-            lambda iterable, *args2, **kwargs2: self.function(
-                iterable, *args, *args2, **kwargs, **kwargs2
-            )
+            self.function,
+            *self.args,
+            *args,
+            **self.kwargs,
+            **kwargs,
+        )
+
+    def __repr__(self) -> str:
+        return "piped::<%s>(*%s, **%s)" % (
+            self.function.__name__,
+            self.args,
+            self.kwargs,
+        )
+
+    def __get__(self, instance, owner=None):
+        return Pipe(
+            function=self.function.__get__(instance, owner),
+            *self.args,
+            **self.kwargs,
         )
 
 
 @Pipe
 def take(iterable, qte):
-    "Yield qte of elements in the given iterable."
+    """Yield qte of elements in the given iterable."""
     if not qte:
         return
     for item in iterable:
@@ -63,13 +105,13 @@ def take(iterable, qte):
 
 @Pipe
 def tail(iterable, qte):
-    "Yield qte of elements in the given iterable."
+    """Yield qte of elements in the given iterable."""
     return deque(iterable, maxlen=qte)
 
 
 @Pipe
 def skip(iterable, qte):
-    "Skip qte elements in the given iterable, then yield others."
+    """Skip qte elements in the given iterable, then yield others."""
     for item in iterable:
         if qte == 0:
             yield item
@@ -213,8 +255,3 @@ chain = Pipe(itertools.chain.from_iterable)
 chain_with = Pipe(itertools.chain)
 islice = Pipe(itertools.islice)
 izip = Pipe(zip)
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testfile("README.md")

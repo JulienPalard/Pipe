@@ -20,3 +20,4 @@ pip-log.txt
 .mypy_cache/
 .venv/
 .envrc
+.build

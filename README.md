@@ -533,6 +533,51 @@ optional arguments after:
 >>>
 ```
 
+### Organizing pipes more effectively using classes
+
+The `@Pipe` decorator isn't just for functions-it also works with classes. You can use it with instance methods, class methods, and static methods to better structure your code while keeping it pipeable.
+
+1. Using an Instance Method
+
+```python
+>>> class Factor:
+...     def __init__(self, n: int):
+...         self.n = n
+...     @Pipe
+...     def mul(self, iterable):
+...         return (x * self.n for x in iterable)
+>>> fact = Factor(10)
+>>> list([1, 2, 3] | fact.mul)
+[10, 20, 30]
+>>>
+```
+
+2. Using a Class Method
+
+```python
+>>> class Factor:
+...     n: int = 10
+...     @Pipe
+...     @classmethod
+...     def mul(cls, iterable):
+...         return (x * cls.n for x in iterable)
+>>> list([1, 2, 3] | Factor.mul)
+[10, 20, 30]
+>>>
+```
+
+3. Using a Static Method
+
+```python
+>>> class Factor:
+...     @Pipe
+...     @staticmethod
+...     def mul(iterable):
+...         return (x * 10 for x in iterable)
+>>> list([1, 2, 3] | Factor.mul)
+[10, 20, 30]
+>>>
+```
 
 ## One-off pipes
 
